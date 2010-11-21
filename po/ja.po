@@ -1,0 +1,105 @@
+# Japanese Language file for exword_tools
+# Copyright (C) 2010
+# This file is distributed under the same license as the exword_tools package.
+# Brian Johnson <brijohn@gmail.com>, 2010.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: .1\n"
+"Report-Msgid-Bugs-To: brijohn@gmail.com\n"
+"POT-Creation-Date: 2010-11-19 20:23-0500\n"
+"PO-Revision-Date: 2010-11-19 19:19-0500\n"
+"Last-Translator: Brian Johnson <brijohn@gmail.com>\n"
+"Language: Japanese\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: ../src/TextLoader.c:30
+msgid "Out of memory"
+msgstr "メモリ不足"
+
+#: ../src/TextLoader.c:44
+msgid "TextLoader"
+msgstr "テキストローダー"
+
+#: ../src/TextLoader.c:77
+msgid "Capacity"
+msgstr "体積"
+
+#: ../src/TextLoader.c:134
+msgid "File not found."
+msgstr "ファイルがありませんでした。"
+
+#: ../src/TextLoader.c:138
+msgid "Internal error."
+msgstr "内部エラー"
+
+#: ../src/TextLoader.c:165
+msgid "Device not found."
+msgstr "電子辞書がありませんでした。"
+
+#: ../src/TextLoader.c:169
+msgid "Connect failed."
+msgstr "接続に失敗しました"
+
+#: ../src/TextLoader.c:174
+msgid "  Disconnect  "
+msgstr "  ディスコネクト  "
+
+#: ../src/TextLoader.c:205 ../TextLoader.glade.h:1
+msgid "  Connect  "
+msgstr "  コネクト  "
+
+#: ../TextLoader.glade.h:2
+msgid "Casio Ex-Word TextLoader"
+msgstr "CASIO Ex-Word テキストローダー"
+
+#: ../TextLoader.glade.h:3
+msgid "Chinese"
+msgstr "中国"
+
+#: ../TextLoader.glade.h:4
+msgid "Delete"
+msgstr "消す"
+
+#: ../TextLoader.glade.h:5
+msgid "Filename"
+msgstr "名前"
+
+#: ../TextLoader.glade.h:6
+msgid "French"
+msgstr "フランス"
+
+#: ../TextLoader.glade.h:7
+msgid "German"
+msgstr "ドイツ"
+
+#: ../TextLoader.glade.h:8
+msgid "Japanese"
+msgstr "日本"
+
+#: ../TextLoader.glade.h:9
+msgid "Korean"
+msgstr "韓国"
+
+#: ../TextLoader.glade.h:10
+msgid "Mem"
+msgstr "内部メモリ"
+
+#: ../TextLoader.glade.h:11
+msgid "Region"
+msgstr "地域"
+
+#: ../TextLoader.glade.h:12
+msgid "Russian"
+msgstr "ロシア"
+
+#: ../TextLoader.glade.h:13
+msgid "SD Card"
+msgstr "メモリカード"
+
+#: ../TextLoader.glade.h:14
+msgid "Spanish"
+msgstr "スペイン"

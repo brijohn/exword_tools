@@ -1,0 +1,18 @@
+Exword Tools
+==================================================
+This is a collection of tools used for communicating with
+CASIO Ex-Word dictionaries using the libexword library.
+
+Included applications:
+   * TextLoader
+
+
+TextLoader
+--------------------------------------------------
+
+This application is written to allow uploading and removal
+of text files to/from Ex-Word dictionaries. Provides similar
+functionality to CASIO's offical TextLoader program.
+
+
+
