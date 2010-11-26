@@ -33,11 +33,11 @@
 typedef struct _TextLoader {
 	GtkBuilder *builder;
 	exword_t *handle;
+	gchar ** uri_list;
 } TextLoader;
 
-TextLoader * textloader_init(GError **error)
+void textloader_enable_dnd(TextLoader *self)
 {
-	GtkWidget *window;
 	GtkWidget *file_list;
     	static GtkTargetEntry targetentries[] =
 	{
@@ -45,6 +45,77 @@ TextLoader * textloader_init(GError **error)
 	  {"text/plain",    0, 0 },
 	  {"text/uri-list", 0, 1 },
 	};
+	file_list = GTK_WIDGET(gtk_builder_get_object (self->builder, "file_list"));
+	gtk_drag_dest_set(file_list, GTK_DEST_DEFAULT_ALL, targetentries, 3,
+			  GDK_ACTION_COPY|GDK_ACTION_MOVE|GDK_ACTION_LINK);
+}
+
+void textloader_disable_dnd(TextLoader *self)
+{
+	GtkWidget *file_list;
+	file_list = GTK_WIDGET(gtk_builder_get_object (self->builder, "file_list"));
+	gtk_drag_dest_unset(file_list);
+}
+
+void textloader_put_cb(char *name, uint32_t transferred, uint32_t size, void *userdata)
+{
+	TextLoader *self = (TextLoader *)userdata;
+	gchar *msg = g_strdup_printf(_("Copying %s..."), name);
+	gdk_threads_enter();
+	GtkLabel * text = GTK_LABEL(gtk_builder_get_object (self->builder, "file_label"));
+	GtkProgressBar *progress = GTK_PROGRESS_BAR(gtk_builder_get_object (self->builder, "file_progress"));
+	gtk_label_set_text(text, msg);
+	gtk_progress_bar_set_fraction(progress, (double)transferred / (double)size);
+	gdk_threads_leave();
+	g_free(msg);
+}
+
+gpointer upload_thread(gpointer userdata)
+{
+	GFile *file;
+	char *ext, *buffer;
+	int i, length;
+	GError *err;
+	GtkWidget *progress;
+	GtkProgressBar *file_progress;
+	GtkLabel *file_label;
+	TextLoader *self = (TextLoader *)userdata;
+	gdk_threads_enter();
+	progress = GTK_WIDGET(gtk_builder_get_object (self->builder, "progress"));
+	file_progress = GTK_PROGRESS_BAR(gtk_builder_get_object (self->builder, "file_progress"));
+	file_label = GTK_LABEL(gtk_builder_get_object (self->builder, "file_label"));
+	gtk_label_set_text(file_label, "");
+	gtk_progress_bar_set_fraction(file_progress, 0.0);
+	gtk_widget_show(progress);
+	textloader_disable_dnd(self);
+	gdk_threads_leave();
+
+	for (i = 0; self->uri_list[i] != NULL; i++) {
+		file = g_file_new_for_uri(self->uri_list[i]);
+		ext = strrchr(g_file_get_basename(file), '.');
+		if (ext != NULL && (!strcmp(ext, ".TXT") || !strcmp(ext, ".txt"))) {
+			if (g_file_load_contents(file, NULL, &buffer, &length, NULL, &err)) {
+				exword_send_file(self->handle, g_file_get_basename(file), buffer, length);
+				free(buffer);
+			} else {
+				fprintf(stderr, "%s\n", err->message);
+			}
+		}
+		g_object_unref(G_OBJECT(file));
+	}
+	g_strfreev(self->uri_list);
+
+	gdk_threads_enter();
+	gtk_widget_hide(progress);
+	textloader_list_files(self);
+	textloader_enable_dnd(self);
+	gdk_threads_leave();
+	return NULL;
+}
+
+TextLoader * textloader_init(GError **error)
+{
+	GtkWidget *window;
 	*error = NULL;
 	TextLoader *self = malloc(sizeof(struct _TextLoader));
 	if (!self) {
@@ -58,9 +129,7 @@ TextLoader * textloader_init(GError **error)
 		return NULL;
 	}
 	window = GTK_WIDGET(gtk_builder_get_object (self->builder, "window"));
-	file_list = GTK_WIDGET(gtk_builder_get_object (self->builder, "file_list"));
-	gtk_drag_dest_set(file_list, GTK_DEST_DEFAULT_ALL, targetentries, 3,
-			  GDK_ACTION_COPY|GDK_ACTION_MOVE|GDK_ACTION_LINK);
+	textloader_enable_dnd(self);
 	gtk_builder_connect_signals(self->builder, self );
 	gtk_window_set_title(GTK_WINDOW(window), _("TextLoader"));
 	gtk_widget_show(window);
@@ -202,6 +271,7 @@ int textloader_connect(TextLoader *self, GError **error)
 			self->handle = NULL;
 			return 0;
 		}
+		exword_register_callbacks(self->handle, NULL, textloader_put_cb, self);
 		gtk_button_set_label(connect, _("  Disconnect  "));
 		gtk_widget_set_sensitive(GTK_WIDGET(select_locale), FALSE);
 		if (!textloader_is_sd_available(self))
@@ -313,43 +383,31 @@ void on_destroy (GtkObject * widget, gpointer data)
 	gtk_main_quit ();
 }
 
+gboolean on_delete_progress_window(GtkObject * widget, gpointer data)
+{
+	return TRUE;
+}
+
 void on_upload_file(GtkWidget *wgt, GdkDragContext *context, int x, int y,
 		    GtkSelectionData *seldata, guint info, guint time,
 		    gpointer data)
 {
-	int i;
-	char *ext;
-	gchar ** uri_list;
-	GFile *file;
-	char *buffer;
-	gsize length;
-	GError *err = NULL;
+
 	TextLoader *self = (TextLoader *)data;
 	if (!self->handle)
 		return;
-	uri_list = g_uri_list_extract_uris((const gchar *)seldata->data);
-	for (i = 0; uri_list[i] != NULL; i++) {
-		file = g_file_new_for_uri(uri_list[i]);
-		ext = strrchr(g_file_get_basename(file), '.');
-		if (ext != NULL && (!strcmp(ext, ".TXT") || !strcmp(ext, ".txt"))) {
-			if (g_file_load_contents(file, NULL, &buffer, &length, NULL, &err)) {
-				exword_send_file(self->handle, g_file_get_basename(file), buffer, length);
-				textloader_list_files(self);
-				free(buffer);
-			} else {
-				textloader_display_error(self, err->message);
-			}
-		}
-		g_object_unref(G_OBJECT(file));
-	}
-	g_strfreev(uri_list);
+	self->uri_list = g_uri_list_extract_uris((const gchar *)seldata->data);
+	g_thread_create(upload_thread, self, FALSE, NULL);
 	gtk_drag_finish(context, TRUE, FALSE, time);
 }
 
 int main(int argc, char** argv)
 {
 	GError *err = NULL;
+	g_thread_init(NULL);
+	gdk_threads_init();
 	gtk_init(&argc, &argv);
+	gdk_threads_enter();
 	bindtextdomain(GETTEXT_PACKAGE, LOCALEDIR);
 	bind_textdomain_codeset(GETTEXT_PACKAGE, "UTF-8");
 	textdomain(GETTEXT_PACKAGE);
@@ -360,6 +418,7 @@ int main(int argc, char** argv)
 		fprintf(stderr, "%s\n", err->message);
 		g_error_free(err);
 	}
+	gdk_threads_leave();
 	return 0;
 }
 

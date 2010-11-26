@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: .1\n"
 "Report-Msgid-Bugs-To: brijohn@gmail.com\n"
-"POT-Creation-Date: 2010-11-19 20:23-0500\n"
+"POT-Creation-Date: 2010-11-26 16:03-0500\n"
 "PO-Revision-Date: 2010-11-19 19:19-0500\n"
 "Last-Translator: Brian Johnson <brijohn@gmail.com>\n"
 "Language: Japanese\n"
@@ -16,39 +16,44 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../src/TextLoader.c:30
+#: ../src/TextLoader.c:63
+#, c-format
+msgid "Copying %s..."
+msgstr "%sをコピーしています…"
+
+#: ../src/TextLoader.c:122
 msgid "Out of memory"
 msgstr "メモリ不足"
 
-#: ../src/TextLoader.c:44
+#: ../src/TextLoader.c:134
 msgid "TextLoader"
 msgstr "テキストローダー"
 
-#: ../src/TextLoader.c:77
+#: ../src/TextLoader.c:167
 msgid "Capacity"
 msgstr "体積"
 
-#: ../src/TextLoader.c:134
+#: ../src/TextLoader.c:234
 msgid "File not found."
 msgstr "ファイルがありませんでした。"
 
-#: ../src/TextLoader.c:138
+#: ../src/TextLoader.c:238
 msgid "Internal error."
 msgstr "内部エラー"
 
-#: ../src/TextLoader.c:165
+#: ../src/TextLoader.c:265
 msgid "Device not found."
 msgstr "電子辞書がありませんでした。"
 
-#: ../src/TextLoader.c:169
+#: ../src/TextLoader.c:269
 msgid "Connect failed."
 msgstr "接続に失敗しました"
 
-#: ../src/TextLoader.c:174
+#: ../src/TextLoader.c:275
 msgid "  Disconnect  "
 msgstr "  ディスコネクト  "
 
-#: ../src/TextLoader.c:205 ../TextLoader.glade.h:1
+#: ../src/TextLoader.c:306 ../TextLoader.glade.h:1
 msgid "  Connect  "
 msgstr "  コネクト  "
 
@@ -103,3 +108,7 @@ msgstr "メモリカード"
 #: ../TextLoader.glade.h:14
 msgid "Spanish"
 msgstr "スペイン"
+
+#: ../TextLoader.glade.h:15
+msgid "Upload"
+msgstr "アップロード"
