@@ -139,11 +139,11 @@ TextLoader * textloader_init(GError **error)
 
 int textloader_is_sd_available(TextLoader* self)
 {
-	directory_entry_t *entries;
+	exword_dirent_t *entries;
 	uint16_t count;
 	int i;
 	int found = 0;
-	if (exword_setpath(self->handle, "", SETPATH_NOCREATE) == 0x20) {
+	if (exword_setpath(self->handle, "", 0) == 0x20) {
 		if (exword_list(self->handle, &entries, &count) == 0x20) {
 			for (i = 0; i < count; i++) {
 				if (strcmp(entries[i].name, "_SD_00") == 0)
@@ -164,7 +164,7 @@ int textloader_capacity(TextLoader *self)
 	if (exword_get_capacity(self->handle, &cap) == 0x20) {
 		status = GTK_STATUSBAR (gtk_builder_get_object (self->builder, "statusbar"));
 		id = gtk_statusbar_get_context_id(status, "capacity");
-		message = g_strdup_printf("%s: %u / %u", _("Capacity"), cap.total, cap.used);
+		message = g_strdup_printf("%s: %u / %u", _("Capacity"), cap.total, cap.free);
 		gtk_statusbar_pop(status, id);
 		gtk_statusbar_push(status, id, message);
 		g_free(message);
@@ -176,7 +176,7 @@ int textloader_list_files(TextLoader *self)
 {
 	GtkTreeIter iter;
 	GtkListStore *files;
-	directory_entry_t *entries;
+	exword_dirent_t *entries;
 	uint16_t count;
 	GtkToggleButton *mem;
 	int i;
@@ -186,10 +186,10 @@ int textloader_list_files(TextLoader *self)
 	mem = GTK_TOGGLE_BUTTON (gtk_builder_get_object (self->builder, "mem"));
 	gtk_list_store_clear(files);
 	if (gtk_toggle_button_get_active(mem)) {
-		if (exword_setpath(self->handle, "\\_INTERNAL_00", SETPATH_NOCREATE) != 0x20)
+		if (exword_setpath(self->handle, "\\_INTERNAL_00", 0) != 0x20)
 			return 0;
 	} else {
-		if (exword_setpath(self->handle, "\\_SD_00", SETPATH_NOCREATE) != 0x20)
+		if (exword_setpath(self->handle, "\\_SD_00", 0) != 0x20)
 			return 0;
 	}
 	if (exword_list(self->handle, &entries, &count) != 0x20)
@@ -228,7 +228,7 @@ int textloader_delete_file(TextLoader *self, GError **error)
 	selection = gtk_tree_view_get_selection(file_list);
 	if (gtk_tree_selection_get_selected(selection, &model, &iter)) {
 		gtk_tree_model_get_value(model, &iter, 0, &val);
-		ret = exword_remove_file(self->handle, (char *)g_value_get_string(&val));
+		ret = exword_remove_file(self->handle, (char *)g_value_get_string(&val), 0);
 		g_value_unset(&val);
 		if (ret == 0x44) {
 			*error = g_error_new_literal(0x1000, 0x1003, _("File not found."));
@@ -278,7 +278,7 @@ int textloader_connect(TextLoader *self, GError **error)
 			gtk_widget_set_sensitive(sdcard, FALSE);
 		else
 			gtk_widget_set_sensitive(sdcard, TRUE);
-		exword_setpath(self->handle, "\\_INTERNAL_00\\", SETPATH_NOCREATE);
+		exword_setpath(self->handle, "\\_INTERNAL_00\\", 0);
 		textloader_list_files(self);
 	}
 	return 1;
