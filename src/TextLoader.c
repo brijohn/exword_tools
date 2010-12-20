@@ -221,15 +221,21 @@ int textloader_delete_file(TextLoader *self, GError **error)
 	GtkTreeIter iter;
 	GtkTreeModel *model;
 	GtkTreeSelection *selection;
-	GValue val={0,};
+	GValue name={0,};
+	GValue flags={0,};
 	char *filename;
 	*error = NULL;
 	file_list = GTK_TREE_VIEW(gtk_builder_get_object (self->builder, "file_list"));
 	selection = gtk_tree_view_get_selection(file_list);
 	if (gtk_tree_selection_get_selected(selection, &model, &iter)) {
-		gtk_tree_model_get_value(model, &iter, 0, &val);
-		ret = exword_remove_file(self->handle, (char *)g_value_get_string(&val), 0);
-		g_value_unset(&val);
+		gtk_tree_model_get_value(model, &iter, 0, &name);
+		gtk_tree_model_get_value(model, &iter, 1, &flags);
+		if (g_value_get_uint(&flags) & LIST_F_UNICODE)
+			ret = exword_remove_file(self->handle, (char *)g_value_get_string(&name), 1);
+		else
+			ret = exword_remove_file(self->handle, (char *)g_value_get_string(&name), 0);
+		g_value_unset(&name);
+		g_value_unset(&flags);
 		if (ret == 0x44) {
 			*error = g_error_new_literal(0x1000, 0x1003, _("File not found."));
 			return 0;
