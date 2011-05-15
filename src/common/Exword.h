@@ -22,6 +22,7 @@
 #define EXWORDDEVICE_H
 
 #include <exword.h>
+#include <wx/filename.h>
 
 #include "Model.h"
 #include "Dictionary.h"

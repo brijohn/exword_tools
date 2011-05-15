@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<resource xmlns="http://www.wxwindows.org/wxxrc" version="2.3.0.1">
+	<object class="wxFrame" name="LibraryGUI">
+		<style>wxCAPTION|wxCLOSE_BOX|wxTAB_TRAVERSAL</style>
+		<size>550,500</size>
+		<title>Exword Library</title>
+		<object class="wxPanel" name="m_panel1">
+			<style>wxTAB_TRAVERSAL</style>
+			<object class="wxBoxSizer">
+				<orient>wxVERTICAL</orient>
+				<object class="sizeritem">
+					<option>0</option>
+					<flag>wxBOTTOM|wxEXPAND|wxLEFT|wxRIGHT|wxTOP</flag>
+					<border>5</border>
+					<object class="wxBoxSizer">
+						<orient>wxHORIZONTAL</orient>
+						<object class="sizeritem">
+							<option>0</option>
+							<flag>wxALL</flag>
+							<border>5</border>
+							<object class="wxStaticText" name="m_staticText1">
+								<style>wxALIGN_RIGHT</style>
+								<label>Region</label>
+							</object>
+						</object>
+						<object class="sizeritem">
+							<option>1</option>
+							<flag>wxEXPAND|wxLEFT|wxRIGHT</flag>
+							<border>5</border>
+							<object class="wxChoice" name="m_region">
+								<selection>0</selection>
+								<content>
+									<item>Japanese</item>
+									<item>Korean</item>
+									<item>Chinese</item>
+									<item>German</item>
+									<item>Spanish</item>
+									<item>French</item>
+									<item>Russian</item>
+								</content>
+							</object>
+						</object>
+						<object class="sizeritem">
+							<option>0</option>
+							<flag>wxALL</flag>
+							<border>0</border>
+							<object class="wxButton" name="m_connect">
+								<label>Connect</label>
+								<default>0</default>
+							</object>
+						</object>
+					</object>
+				</object>
+				<object class="sizeritem">
+					<option>0</option>
+					<flag>wxBOTTOM|wxEXPAND|wxLEFT|wxRIGHT</flag>
+					<border>5</border>
+					<object class="wxBoxSizer">
+						<orient>wxHORIZONTAL</orient>
+						<object class="sizeritem">
+							<option>0</option>
+							<flag>wxALL</flag>
+							<border>5</border>
+							<object class="wxStaticText" name="m_staticText2">
+								<style>wxALIGN_RIGHT</style>
+								<label>User   </label>
+							</object>
+						</object>
+						<object class="sizeritem">
+							<option>1</option>
+							<flag>wxEXPAND|wxLEFT|wxRIGHT</flag>
+							<border>10</border>
+							<object class="wxComboBox" name="m_user">
+								<value></value>
+								<content />
+							</object>
+						</object>
+						<object class="sizeritem">
+							<option>0</option>
+							<flag>wxALL</flag>
+							<border>0</border>
+							<object class="wxRadioButton" name="m_internal">
+								<style>wxRB_GROUP</style>
+								<label>Internal</label>
+								<value>1</value>
+							</object>
+						</object>
+						<object class="sizeritem">
+							<option>0</option>
+							<flag>wxALL</flag>
+							<border>0</border>
+							<object class="wxRadioButton" name="m_sd">
+								<label>SD Card</label>
+								<value>0</value>
+							</object>
+						</object>
+					</object>
+				</object>
+				<object class="sizeritem">
+					<option>1</option>
+					<flag>wxALL|wxEXPAND</flag>
+					<border>2</border>
+					<object class="wxBoxSizer">
+						<orient>wxHORIZONTAL</orient>
+						<object class="sizeritem">
+							<option>1</option>
+							<flag>wxEXPAND</flag>
+							<border>5</border>
+							<object class="wxStaticBoxSizer">
+								<orient>wxVERTICAL</orient>
+								<label>Local</label>
+								<object class="sizeritem">
+									<option>1</option>
+									<flag>wxALL|wxEXPAND</flag>
+									<border>1</border>
+									<object class="wxListCtrl" name="m_local" subclass="DictionaryListCtrl">
+										<style>wxLC_REPORT|wxLC_SINGLE_SEL|wxLC_VIRTUAL</style>
+									</object>
+								</object>
+							</object>
+						</object>
+						<object class="sizeritem">
+							<option>0</option>
+							<flag>wxALIGN_CENTER_VERTICAL</flag>
+							<border>5</border>
+							<object class="wxBoxSizer">
+								<orient>wxVERTICAL</orient>
+								<object class="sizeritem">
+									<option>0</option>
+									<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+									<border>5</border>
+									<object class="wxButton" name="m_install">
+										<label>Install</label>
+										<default>0</default>
+									</object>
+								</object>
+								<object class="sizeritem">
+									<option>0</option>
+									<flag>wxALIGN_CENTER_VERTICAL|wxALL</flag>
+									<border>5</border>
+									<object class="wxButton" name="m_remove">
+										<label>Remove</label>
+										<default>0</default>
+									</object>
+								</object>
+							</object>
+						</object>
+						<object class="sizeritem">
+							<option>1</option>
+							<flag>wxEXPAND</flag>
+							<border>5</border>
+							<object class="wxStaticBoxSizer">
+								<orient>wxVERTICAL</orient>
+								<label>Remote</label>
+								<object class="sizeritem">
+									<option>1</option>
+									<flag>wxALL|wxEXPAND</flag>
+									<border>1</border>
+									<object class="wxListCtrl" name="m_remote" subclass="DictionaryListCtrl">
+										<style>wxLC_REPORT|wxLC_SINGLE_SEL|wxLC_VIRTUAL</style>
+									</object>
+								</object>
+							</object>
+						</object>
+					</object>
+				</object>
+			</object>
+		</object>
+		<object class="wxStatusBar" name="m_status">
+			<fields>1</fields>
+		</object>
+	</object>
+</resource>

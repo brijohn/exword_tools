@@ -58,5 +58,6 @@ AC_SUBST([AM_LDFLAGS])
 
 AC_CONFIG_FILES([Makefile
 		src/Makefile
-		src/textloader/Makefile])
+		src/textloader/Makefile
+		src/library/Makefile])
 AC_OUTPUT

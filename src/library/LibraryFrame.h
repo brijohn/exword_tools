@@ -1,4 +1,4 @@
-/* ExwordTextLoader - Main TextLoader frame
+/* ExwordLibrary - Main frame for ExwordLibrary
  *
  * Copyright (C) 2011 - Brian Johnson <brijohn@gmail.com>
  *
@@ -18,8 +18,8 @@
  *
  */
 
-#ifndef TEXTLOADERFRAME_H
-#define TEXTLOADERFRAME_H
+#ifndef LIBRARYFRAME_H
+#define LIBRARYFRAME_H
 
 #include <wx/xrc/xmlres.h>
 #include <wx/string.h>
@@ -40,33 +40,39 @@
 #include <wx/frame.h>
 #include <wx/msgdlg.h>
 
-#include "Exword.h"
+#include "DictionaryListCtrl.h"
 #include "ProgressDialog.h"
+#include "Exword.h"
 #include "Resources.h"
+#include "Users.h"
 
-class TextLoaderFrame : public TextLoaderGUI
+class LibraryFrame : public LibraryGUI
 {
     private:
         ProgressDialog *m_progress;
+        wxTimer m_pulser;
+        Users m_users;
         Exword m_exword;
     public:
-        TextLoaderFrame();
-        ~TextLoaderFrame();
-        void UploadFiles(const wxArrayString& filenames);
+        LibraryFrame();
+        ~LibraryFrame();
     private:
         ExwordRegion GetRegionFromString(wxString name);
         void UpdateStatusbar();
-        void UpdateFilelist();
 
         void OnConnect(wxCommandEvent& event);
-        void OnDelete(wxCommandEvent& event);
         void OnInternal(wxCommandEvent& event);
         void OnSDCard(wxCommandEvent& event);
+        void OnInstall(wxCommandEvent& event);
+        void OnRemove(wxCommandEvent& event);
 
         void OnThreadStart(wxCommandEvent& event);
         void OnThreadUpdate(wxCommandEvent& event);
         void OnThreadFinish(wxCommandEvent& event);
+        void OnPulse(wxTimerEvent& event);
     DECLARE_EVENT_TABLE();
 };
 
 #endif
+
+

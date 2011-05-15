@@ -5,6 +5,7 @@ CASIO Ex-Word dictionaries using the libexword library.
 
 Included applications:
    * TextLoader
+   * Library
 
 
 TextLoader
@@ -14,3 +15,8 @@ This application is written to allow uploading and removal
 of text files to/from Ex-Word dictionaries. It provides similar
 functionality to CASIO's offical TextLoader program.
 
+Library
+--------------------------------------------------
+This application is an implementation of Casio's CasioLibrary
+program. It allows you to install add-ons onto an exword device as
+well as removing installed add-ons.

@@ -5,7 +5,8 @@ bin_PROGRAMS = ExwordTextLoader
 ExwordTextLoader_SOURCES = TextLoader.cpp TextLoaderFrame.cpp \
                            ../common/Exword.cpp ../common/Dictionary.cpp \
                            ../common/TransferThread.cpp UploadThread.cpp \
-                           ../common/Model.cpp Resources.cpp
+                           ../common/ProgressDialog.cpp ../common/Model.cpp \
+                           Resources.cpp
 
 ExwordTextLoader_CXXFLAGS = -I../common \
                             $(WARN_CFLAGS)   \

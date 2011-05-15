@@ -35,25 +35,6 @@ class ExwordFileDropTarget : public wxFileDropTarget
         TextLoaderFrame *m_frame;
 };
 
-ProgressDialog::ProgressDialog(wxWindow *parent, wxString message) : wxProgressDialog(_("Transfer progress"), message, 100, parent, wxPD_APP_MODAL)
-{
-    SetSize(wxDefaultCoord, wxDefaultCoord, 350, wxDefaultCoord, wxSIZE_AUTO_HEIGHT);
-    Centre();
-}
-
-void ProgressDialog::OnClose(wxCloseEvent &event)
-{
-    if (event.CanVeto()) {
-        event.Veto();
-        return;
-    }
-    event.Skip();
-}
-
-BEGIN_EVENT_TABLE(ProgressDialog, wxProgressDialog)
-    EVT_CLOSE(ProgressDialog::OnClose)
-END_EVENT_TABLE()
-
 BEGIN_EVENT_TABLE(TextLoaderFrame, TextLoaderGUI)
     EVT_BUTTON(XRCID("m_connect"), TextLoaderFrame::OnConnect)
     EVT_BUTTON(XRCID("m_delete"), TextLoaderFrame::OnDelete)

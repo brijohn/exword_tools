@@ -1,1 +1,1 @@
-SUBDIRS = textloader
+SUBDIRS = textloader library
