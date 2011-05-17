@@ -23,6 +23,7 @@
 
 #include <exword.h>
 
+#include "Model.h"
 #include "Dictionary.h"
 
 enum ExwordMode {
@@ -89,6 +90,7 @@ class Exword {
         bool RemoveDictionary(RemoteDictionary *dict);
         bool SetStorage(ExwordStorage storage);
         void SetFileCallback(ExwordCallback *cb);
+        Model GetModel();
     private:
         void ReadAdmini(wxMemoryBuffer& buffer);
         wxString GetStoragePath();

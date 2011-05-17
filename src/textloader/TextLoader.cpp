@@ -28,6 +28,8 @@ IMPLEMENT_APP(TextLoader);
 bool TextLoader::OnInit()
 {
     SetAppName(wxT("exword"));
+    wxLog *logger=new wxLogStderr();
+    wxLog::SetActiveTarget(logger);
     wxXmlResource::Get()->InitAllHandlers();
     InitXmlResource();
     TextLoaderFrame *frame = new TextLoaderFrame();

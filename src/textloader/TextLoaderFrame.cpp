@@ -66,8 +66,10 @@ END_EVENT_TABLE()
 
 TextLoaderFrame::TextLoaderFrame()
 {
+    int fieldWidths[] = {175, -1};
     m_progress = NULL;
     m_sd->Enable(false);
+    m_status->SetFieldsCount(2, fieldWidths);
     m_filelist->InsertColumn(0, _("Filename"));
     m_filelist->SetColumnWidth(0, 485);
     m_filelist->SetFont(wxFont(8, 76, 90, 90, false, wxEmptyString));
@@ -100,13 +102,17 @@ ExwordRegion TextLoaderFrame::GetRegionFromString(wxString name)
 
 void TextLoaderFrame::UpdateStatusbar()
 {
-    wxString text = wxT("");
+    wxString capTxt = wxT("");
+    wxString modelTxt = wxT("");
     if (m_exword.IsConnected()) {
         Capacity cap = m_exword.GetCapacity();
+        Model model = m_exword.GetModel();
         unsigned long percent = ((float)cap.GetFree() / (float)cap.GetTotal()) * 100;
-        text.Printf(_("Capacity: %lu / %lu (%lu%%)"), cap.GetFree(), cap.GetTotal(), percent);
+        capTxt.Printf(_("Capacity: %lu / %lu (%lu%%)"), cap.GetFree(), cap.GetTotal(), percent);
+        modelTxt.Printf(wxT("%s %s"), model.GetSeriesName().c_str(), model.GetModel().c_str());
     }
-    m_status->SetStatusText(text);
+    m_status->SetStatusText(modelTxt, 0);
+    m_status->SetStatusText(capTxt, 1);
 }
 
 void TextLoaderFrame::UpdateFilelist()

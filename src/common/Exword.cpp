@@ -416,6 +416,30 @@ bool Exword::SetStorage(ExwordStorage storage)
     return true;
 }
 
+
+Model Exword::GetModel()
+{
+    Model modelInfo;
+    exword_model_t model;
+    memset(&model, 0, sizeof(exword_model_t));
+    if (exword_get_model(m_device, &model) == 0x20) {
+        modelInfo = ModelDatabase::Get()->Lookup(wxString::FromAscii(model.model),
+                                                 wxString::FromAscii(model.sub_model),
+                                                 wxString::FromAscii(model.ext_model));
+        if (modelInfo.GetSeries() == 0) {
+            if ((model.capabilities & CAP_F) &&
+                (model.capabilities & CAP_C)) {
+                modelInfo = Model(5);
+            } else if (model.capabilities & CAP_P) {
+                modelInfo = Model(4);
+            } else {
+                modelInfo = Model(3);
+            }
+        }
+    }
+    return modelInfo;
+}
+
 wxString Exword::GetStoragePath()
 {
     if (m_storage == SD)
@@ -441,6 +465,8 @@ void Exword::ReadAdmini(wxMemoryBuffer& buffer)
         }
     }
 }
+
+
 
 wxString Exword::GetUserDataDir()
 {
