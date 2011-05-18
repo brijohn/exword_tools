@@ -1,1 +1,1 @@
-SUBDIRS = textloader library
+SUBDIRS = unshield textloader library libraryinstaller

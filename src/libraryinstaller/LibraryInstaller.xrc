@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<resource xmlns="http://www.wxwindows.org/wxxrc" version="2.3.0.1">
+	<object class="wxWizard" name="InstallWizard_Base">
+		<style>wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER</style>
+		<title>Add-on Dictionary Installer</title>
+		<object class="wxWizardPageSimple" name="m_start">
+			<object class="wxBoxSizer">
+				<orient>wxVERTICAL</orient>
+				<object class="sizeritem">
+					<option>0</option>
+					<flag>wxALL</flag>
+					<border>5</border>
+					<object class="wxStaticText">
+						<font>
+							<size>15</size>
+							<family>swiss</family>
+							<style>normal</style>
+							<weight>bold</weight>
+							<underlined>0</underlined>
+							<face>Sans</face>
+						</font>
+						<label>CASIO Ex-word installer</label>
+					</object>
+				</object>
+				<object class="sizeritem">
+					<option>0</option>
+					<flag>wxALL</flag>
+					<border>5</border>
+					<object class="wxStaticText">
+						<label>This installer walk you through the process of installing your CASIO Ex-word add-on dictionary.\n\nPlease select the directory containing the InstallShield cabinet files.</label>
+					</object>
+				</object>
+				<object class="spacer">
+					<size>0, 20</size>
+				</object>
+				<object class="sizeritem">
+					<option>0</option>
+					<flag>wxEXPAND</flag>
+					<border>5</border>
+					<object class="wxDirPickerCtrl" name="m_cabDir">
+						<message>Select a folder</message>
+					</object>
+				</object>
+			</object>
+		</object>
+                <object class="wxWizardPageSimple">
+			<object class="wxBoxSizer">
+				<orient>wxVERTICAL</orient>
+				<object class="sizeritem">
+					<option>0</option>
+					<flag>wxALL</flag>
+					<border>5</border>
+					<object class="wxStaticText">
+						<font>
+							<size>15</size>
+							<family>swiss</family>
+							<style>normal</style>
+							<weight>bold</weight>
+							<underlined>0</underlined>
+							<face>Sans</face>
+						</font>
+						<label>Select Add-on Dictionaries</label>
+					</object>
+				</object>
+				<object class="sizeritem">
+					<option>0</option>
+					<flag>wxALL</flag>
+					<border>5</border>
+					<object class="wxStaticText">
+						<label>Select the dictionaries you wish to install.</label>
+					</object>
+				</object>
+				<object class="sizeritem">
+					<option>1</option>
+					<flag>wxEXPAND</flag>
+					<border>5</border>
+					<object class="wxStaticBoxSizer">
+						<orient>wxVERTICAL</orient>
+						<label>Dictionaries</label>
+						<object class="sizeritem">
+							<option>1</option>
+							<flag>wxALL|wxEXPAND</flag>
+							<border>5</border>
+							<object class="wxCheckListBox" name="m_dictionaries">
+								<content />
+							</object>
+						</object>
+					</object>
+				</object>
+			</object>
+                </object>
+                <object class="wxWizardPageSimple">
+			<object class="wxBoxSizer">
+				<orient>wxVERTICAL</orient>
+				<object class="sizeritem">
+					<option>0</option>
+					<flag>wxALL</flag>
+					<border>5</border>
+					<object class="wxStaticText">
+						<font>
+							<size>15</size>
+							<family>swiss</family>
+							<style>normal</style>
+							<weight>bold</weight>
+							<underlined>0</underlined>
+							<face>Sans</face>
+						</font>
+						<label>Installing Dictionaries</label>
+					</object>
+				</object>
+				<object class="sizeritem">
+					<option>0</option>
+					<flag>wxALL</flag>
+					<border>5</border>
+					<object class="wxStaticText">
+						<label>Please wait while installing add-on dictionaries.</label>
+					</object>
+				</object>
+				<object class="sizeritem">
+					<option>1</option>
+					<flag>wxEXPAND</flag>
+					<border>5</border>
+					<object class="wxTextCtrl" name="m_install">
+						<style>wxTE_MULTILINE|wxTE_READONLY</style>
+						<value></value>
+						<maxlength>0</maxlength>
+					</object>
+				</object>
+			</object>
+		</object>
+	</object>
+</resource>
