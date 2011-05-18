@@ -11,8 +11,6 @@ TextLoader
 --------------------------------------------------
 
 This application is written to allow uploading and removal
-of text files to/from Ex-Word dictionaries. Provides similar
+of text files to/from Ex-Word dictionaries. It provides similar
 functionality to CASIO's offical TextLoader program.
-
-
 

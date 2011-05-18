@@ -15,7 +15,6 @@ REQUIRED_AUTOMAKE_VERSION=1.9
 
 (cd $srcdir;
     autoreconf --install --symlink &&
-    intltoolize --copy --force --automake &&
     ./configure $@
 )
 

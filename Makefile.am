@@ -1,17 +1,7 @@
-SUBDIRS = src po
+SUBDIRS = src
 
-INTLTOOL_FILES = intltool-extract.in \
-                 intltool-merge.in \
-                 intltool-update.in
-
-EXTRA_DIST = TextLoader.glade
-pkgdata_DATA = TextLoader.glade
-
-DISTCLEANFILES = intltool-extract.in \
-                 intltool-merge.in \
-                 intltool-update.in \
-                 po/Makefile.in.in \
-                 src/Makefile.in \
+DISTCLEANFILES = src/Makefile.in \
+                 src/textloader/Makefile.in \
                  Makefile.in \
                  aclocal.m4 \
                  config.h.in \
