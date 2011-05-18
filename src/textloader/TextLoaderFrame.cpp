@@ -166,6 +166,7 @@ void TextLoaderFrame::OnDelete(wxCommandEvent& event)
         filename = m_filelist->GetItemText(item);
         m_exword.DeleteFile(filename);
         m_filelist->DeleteItem(item);
+        UpdateStatusbar();
     }
 }
 

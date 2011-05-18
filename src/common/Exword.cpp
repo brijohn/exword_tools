@@ -271,8 +271,13 @@ bool Exword::UploadFile(wxFileName filename)
 
 bool Exword::DeleteFile(wxString filename)
 {
-    exword_remove_file(m_device, (char*)wxConvLocal.cWX2MB(filename).data(), 1);
-    return true;
+    int rsp;
+    Model model = GetModel();
+    if (m_mode == TEXT && model.GetSeries() >=5)
+        rsp = exword_remove_file(m_device, (char*)wxConvLocal.cWX2MB(filename).data(), 1);
+    else
+        rsp = exword_remove_file(m_device, (char*)wxConvLocal.cWX2MB(filename).data(), 0);
+    return (rsp == 0x20);
 }
 
 bool Exword::InstallDictionary(LocalDictionary *dict)
