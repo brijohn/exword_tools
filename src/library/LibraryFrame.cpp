@@ -156,11 +156,21 @@ void LibraryFrame::OnSDCard(wxCommandEvent& event)
 void LibraryFrame::OnInstall(wxCommandEvent& event)
 {
     DictionaryListCtrl * local = dynamic_cast<DictionaryListCtrl*>(m_local);
+    DictionaryListCtrl * remote = dynamic_cast<DictionaryListCtrl*>(m_remote);
     Dictionary * dict = local->GetSelectedDictionary();
     if (dict) {
-        InstallThread *thread = new InstallThread(this, &m_exword);
-        if (!thread->Start(dict))
-            wxMessageBox(_("Failed to start InstallThread"), _("Error"));
+        if (remote->DictionaryExists(dict->GetId())) {
+            wxMessageBox(_("Dictionary already installed"), _("Error"));
+        } else {
+            Capacity cap = m_exword.GetCapacity();
+            if (dict->GetSize() < cap.GetFree()) {
+                InstallThread *thread = new InstallThread(this, &m_exword);
+                if (!thread->Start(dict))
+                    wxMessageBox(_("Failed to start InstallThread"), _("Error"));
+            } else {
+                wxMessageBox(_("Insufficient space"), _("Error"));
+            }
+        }
     } else {
         wxMessageBox(_("No local dictionary selected"), _("Information"));
     }

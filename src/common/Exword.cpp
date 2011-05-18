@@ -295,10 +295,6 @@ bool Exword::InstallDictionary(LocalDictionary *dict)
     memcpy(ck.blk2, key1 + 2, 8);
     memcpy(ck.blk2 + 8, key1 + 12, 4);
     if (dict->Exists()) {
-        cap = GetCapacity();
-        if (dict->GetSize() >= cap.GetFree()) {
-            return success;
-        }
         rsp = exword_unlock(m_device);
         rsp |= exword_cname(m_device, (char*)dict->GetName().mb_str(wxCSConv(wxT("SJIS"))).data(), (char*)dict->GetId().utf8_str().data());
         rsp |= exword_cryptkey(m_device, &ck);

@@ -44,6 +44,15 @@ Dictionary* DictionaryListCtrl::GetSelectedDictionary()
     return m_items[index];
 }
 
+bool DictionaryListCtrl::DictionaryExists(wxString id)
+{
+    for (unsigned int i = 0; i < m_items.GetCount(); ++i) {
+        if (m_items[i]->GetId() == id)
+            return true;
+    }
+    return false;
+}
+
 wxString DictionaryListCtrl::OnGetItemText(long item, long column) const
 {
     Dictionary *dict = m_items[item];

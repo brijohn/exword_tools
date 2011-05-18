@@ -38,6 +38,7 @@ class DictionaryListCtrl : public wxListCtrl {
         void SetDictionaries(DictionaryArray items);
         void ClearDictionaries();
         Dictionary* GetSelectedDictionary();
+        bool DictionaryExists(wxString id);
         virtual wxString OnGetItemText(long item, long column) const;
 
     private:
