@@ -110,7 +110,7 @@ void TextLoaderFrame::UploadFiles(const wxArrayString& filenames)
     if (m_exword.IsConnected()) {
         UploadThread *thread = new UploadThread(this, &m_exword);
         if (!thread->Start(new wxArrayString(filenames)))
-            wxMessageBox(_("Failed to start UploadThread"), _("Error"));
+            wxMessageBox(_("Failed to start UploadThread"), _("Error"), wxOK, this);
     }
 }
 

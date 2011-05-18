@@ -99,11 +99,11 @@ void LibraryFrame::OnConnect(wxCommandEvent& event)
         wxMemoryBuffer key;
         wxString region = m_region->GetString(m_region->GetCurrentSelection());
         if (m_user->GetValue() == wxT("")) {
-            wxMessageBox(_("Must specify username"), _("Connect Error"), wxOK, this);
+            wxMessageBox(_("Must specify username"), _("Error"), wxOK, this);
             return;
         }
         if (!m_exword.Connect(LIBRARY, GetRegionFromString(region))) {
-            wxMessageBox(_("Device not found"), _("Connect Error"), wxOK, this);
+            wxMessageBox(_("Device not found"), _("Error"), wxOK, this);
             return;
         }
         if (m_users.find(m_user->GetValue()) == m_users.end() || !m_exword.Authenticate(m_user->GetValue(), m_users[m_user->GetValue()])) {
@@ -160,19 +160,19 @@ void LibraryFrame::OnInstall(wxCommandEvent& event)
     Dictionary * dict = local->GetSelectedDictionary();
     if (dict) {
         if (remote->DictionaryExists(dict->GetId())) {
-            wxMessageBox(_("Dictionary already installed"), _("Error"));
+            wxMessageBox(_("Dictionary already installed"), _("Error"), wxOK, this);
         } else {
             Capacity cap = m_exword.GetCapacity();
             if (dict->GetSize() < cap.GetFree()) {
                 InstallThread *thread = new InstallThread(this, &m_exword);
                 if (!thread->Start(dict))
-                    wxMessageBox(_("Failed to start InstallThread"), _("Error"));
+                    wxMessageBox(_("Failed to start InstallThread"), _("Error"), wxOK, this);
             } else {
-                wxMessageBox(_("Insufficient space"), _("Error"));
+                wxMessageBox(_("Insufficient space"), _("Error"), wxOK, this);
             }
         }
     } else {
-        wxMessageBox(_("No local dictionary selected"), _("Information"));
+        wxMessageBox(_("No local dictionary selected"), _("Information"), wxOK, this);
     }
 }
 
@@ -184,9 +184,9 @@ void LibraryFrame::OnRemove(wxCommandEvent& event)
         m_pulser.Start(100);
         RemoveThread *thread = new RemoveThread(this, &m_exword);
         if (!thread->Start(dict))
-            wxMessageBox(_("Failed to start RemoveThread"), _("Error"));
+            wxMessageBox(_("Failed to start RemoveThread"), _("Error"), wxOK, this);
     } else {
-        wxMessageBox(_("No remote dictionary selected"), _("Information"));
+        wxMessageBox(_("No remote dictionary selected"), _("Information"), wxOK, this);
     }
 }
 
