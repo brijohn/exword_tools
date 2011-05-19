@@ -48,6 +48,7 @@ class Dictionary {
         virtual unsigned long long GetSize() = 0;
         virtual bool Exists() = 0;
         virtual wxArrayString GetFiles() = 0;
+        virtual unsigned long GetMinSupportedSeries() = 0;
     protected:
         wxString m_id;
 };
@@ -59,6 +60,7 @@ class LocalDictionary : public Dictionary {
         virtual unsigned long long GetSize();
         virtual bool Exists();
         virtual wxArrayString GetFiles();
+        virtual unsigned long GetMinSupportedSeries();
     private:
         wxString m_path;
 };
@@ -71,6 +73,7 @@ class RemoteDictionary : public Dictionary {
         virtual unsigned long long GetSize();
         virtual bool Exists();
         virtual wxArrayString GetFiles();
+        virtual unsigned long GetMinSupportedSeries();
     private:
         Exword *m_device;
         wxString m_name;

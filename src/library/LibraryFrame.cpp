@@ -163,10 +163,16 @@ void LibraryFrame::OnInstall(wxCommandEvent& event)
             wxMessageBox(_("Dictionary already installed"), _("Error"), wxOK, this);
         } else {
             Capacity cap = m_exword.GetCapacity();
+            Model model = m_exword.GetModel();
+            unsigned long min_series = dict->GetMinSupportedSeries();
             if (dict->GetSize() < cap.GetFree()) {
-                InstallThread *thread = new InstallThread(this, &m_exword);
-                if (!thread->Start(dict))
-                    wxMessageBox(_("Failed to start InstallThread"), _("Error"), wxOK, this);
+                if (min_series <= model.GetSeries()) {
+                    InstallThread *thread = new InstallThread(this, &m_exword);
+                    if (!thread->Start(dict))
+                        wxMessageBox(_("Failed to start InstallThread"), _("Error"), wxOK, this);
+                } else {
+                    wxMessageBox(wxString::Format(_("Requires a Dataplus %lu or above"), min_series), _("Error"), wxOK, this);
+                }
             } else {
                 wxMessageBox(_("Insufficient space"), _("Error"), wxOK, this);
             }

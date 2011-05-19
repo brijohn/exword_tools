@@ -107,6 +107,25 @@ wxArrayString LocalDictionary::GetFiles()
     return files;
 }
 
+unsigned long LocalDictionary::GetMinSupportedSeries()
+{
+    wxString filename;
+    unsigned long min_series = 99;
+    wxDir dir(m_path);
+    if (dir.IsOpened()) {
+        unsigned long val;
+        bool cont = dir.GetFirst(&filename, wxT("infodp?.htm"), wxDIR_FILES);
+        while (cont) {
+            if (filename.Mid(6, 1).ToULong(&val)) {
+                if (val != 0 && val < min_series)
+                    min_series = val;
+            }
+            cont = dir.GetNext(&filename);
+        }
+    }
+    return min_series;
+}
+
 
 RemoteDictionary::RemoteDictionary(wxString id, Exword *device) : Dictionary(id)
 {
@@ -134,5 +153,10 @@ bool RemoteDictionary::Exists()
 wxArrayString RemoteDictionary::GetFiles()
 {
     return m_device->List(m_path);
+}
+
+unsigned long RemoteDictionary::GetMinSupportedSeries()
+{
+    return 0;
 }
 
