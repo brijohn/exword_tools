@@ -40,7 +40,7 @@
 #include <wx/frame.h>
 #include <wx/msgdlg.h>
 
-#include "Exword.h"
+#include "ExwordDevice.h"
 #include "ProgressDialog.h"
 #include "Resources.h"
 

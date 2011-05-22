@@ -4,7 +4,7 @@
 AC_PREREQ([2.61])
 AC_INIT(exword_tools, 0.1, brijohn@gmail.com)
 AM_INIT_AUTOMAKE([-Wall -Werror])
-AC_CONFIG_SRCDIR([src/common/Exword.cpp])
+AC_CONFIG_SRCDIR([src/common/ExwordDevice.cpp])
 AC_CONFIG_HEADERS([config.h])
 
 # Checks for programs.

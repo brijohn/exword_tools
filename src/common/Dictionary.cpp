@@ -25,7 +25,7 @@
 #include <wx/longlong.h>
 
 #include "Dictionary.h"
-#include "Exword.h"
+#include "ExwordDevice.h"
 
 
 DictionaryInfo InvalidDictionary("", "", "\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00");

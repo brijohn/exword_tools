@@ -21,7 +21,7 @@
 #include <wx/filename.h>
 #include <wx/file.h>
 
-#include "Exword.h"
+#include "ExwordDevice.h"
 #include "Users.h"
 
 Users::Users() : UserHash()

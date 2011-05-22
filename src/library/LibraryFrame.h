@@ -42,7 +42,7 @@
 
 #include "DictionaryListCtrl.h"
 #include "ProgressDialog.h"
-#include "Exword.h"
+#include "ExwordDevice.h"
 #include "Resources.h"
 #include "Users.h"
 

@@ -3,7 +3,7 @@ BUILT_SOURCES = Resources.h
 bin_PROGRAMS = ExwordLibrary
 
 ExwordLibrary_SOURCES = Library.cpp LibraryFrame.cpp \
-                        ../common/Exword.cpp ../common/Dictionary.cpp \
+                        ../common/ExwordDevice.cpp ../common/Dictionary.cpp \
                         ../common/TransferThread.cpp InstallThread.cpp \
                         ../common/Model.cpp Users.cpp DictionaryListCtrl.cpp \
                         ../common/ProgressDialog.cpp Resources.cpp

@@ -21,7 +21,7 @@
 #ifndef UPLOADTHREAD_H
 #define UPLOADTHREAD_H
 
-#include "Exword.h"
+#include "ExwordDevice.h"
 #include "TransferThread.h"
 
 

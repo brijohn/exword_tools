@@ -3,7 +3,7 @@ BUILT_SOURCES = Resources.h
 bin_PROGRAMS = ExwordTextLoader
 
 ExwordTextLoader_SOURCES = TextLoader.cpp TextLoaderFrame.cpp \
-                           ../common/Exword.cpp ../common/Dictionary.cpp \
+                           ../common/ExwordDevice.cpp ../common/Dictionary.cpp \
                            ../common/TransferThread.cpp UploadThread.cpp \
                            ../common/ProgressDialog.cpp ../common/Model.cpp \
                            Resources.cpp

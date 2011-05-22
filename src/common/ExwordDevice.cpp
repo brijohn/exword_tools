@@ -23,7 +23,7 @@
 #include <wx/file.h>
 #include <wx/dir.h>
 
-#include "Exword.h"
+#include "ExwordDevice.h"
 #include "Dictionary.h"
 
 

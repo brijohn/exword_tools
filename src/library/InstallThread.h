@@ -21,7 +21,7 @@
 #ifndef INSTALLTHREAD_H
 #define INSTALLTHREAD_H
 
-#include "Exword.h"
+#include "ExwordDevice.h"
 #include "TransferThread.h"
 
 
