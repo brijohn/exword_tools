@@ -22,6 +22,7 @@
 #define DICTIONARYLISTCTRL_H
 
 #include <wx/wx.h>
+#include <wx/listctrl.h>
 
 #include "Dictionary.h"
 

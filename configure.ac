@@ -21,7 +21,7 @@ AC_CHECK_LIB(z, inflateEnd, AC_SUBST([ZLIB_LIBS], [-lz]), [AC_MSG_ERROR([zlib su
 AM_OPTIONS_WXCONFIG
 
 reqwx=2.8.0
-AM_PATH_WXCONFIG($reqwx, wxWin=1, wxWin=0, [core, xrc])
+AM_PATH_WXCONFIG($reqwx, wxWin=1, wxWin=0, [core, xrc, adv])
 if test "$wxWin" != 1; then
 	AC_MSG_ERROR([
 		wxWidgets must be installed on your system.

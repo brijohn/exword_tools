@@ -23,7 +23,6 @@
 #include <wx/filename.h>
 
 #include "LibraryInstaller.h"
-#include "Resources.h"
 #include "InstallWizard.h"
 
 IMPLEMENT_APP(LibraryInstaller);
