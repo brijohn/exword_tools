@@ -25,6 +25,7 @@ IMPLEMENT_DYNAMIC_CLASS(DictionaryListCtrl, wxListCtrl);
 void DictionaryListCtrl::SetDictionaries(DictionaryArray items)
 {
     m_items = items;
+    DeleteAllItems();
     SetItemCount(m_items.GetCount());
     RefreshItems(0, GetItemCount());
 }
@@ -32,8 +33,9 @@ void DictionaryListCtrl::SetDictionaries(DictionaryArray items)
 void DictionaryListCtrl::ClearDictionaries()
 {
     m_items.Clear();
-    SetItemCount(m_items.GetCount());
-    RefreshItems(0, GetItemCount());
+    SetItemCount(0);
+    RefreshItems(0, 0);
+    DeleteAllItems();
 }
 
 Dictionary* DictionaryListCtrl::GetSelectedDictionary()
