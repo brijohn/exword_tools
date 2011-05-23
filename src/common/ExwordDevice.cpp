@@ -364,6 +364,7 @@ Capacity Exword::GetCapacity()
 
 wxArrayString Exword::List(wxString path, wxString pattern)
 {
+    wxCSConv conv(wxFONTENCODING_UTF16BE);
     exword_dirent_t *entries;
     uint16_t count;
     wxArrayString list;
@@ -373,7 +374,7 @@ wxArrayString Exword::List(wxString path, wxString pattern)
         if (exword_list(m_device, &entries, &count) == 0x20) {
             for (int i = 0; i < count; i++) {
                 if (entries[i].flags & LIST_F_UNICODE)
-                    filename = wxString((const char*)entries[i].name, wxCSConv(wxT("UTF16BE")));
+                    filename = wxString(conv.cMB2WC((const char*)entries[i].name));
                 else
                     filename = wxString::FromAscii((const char*)entries[i].name);
                 if (wxMatchWild(pattern.Lower(), filename.Lower(), true))
