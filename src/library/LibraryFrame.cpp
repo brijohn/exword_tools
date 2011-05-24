@@ -36,6 +36,8 @@ END_EVENT_TABLE()
 LibraryFrame::LibraryFrame() : m_pulser(this)
 {
     int fieldWidths[] = {175, -1};
+    DictionaryListCtrl * remote = dynamic_cast<DictionaryListCtrl*>(m_remote);
+    DictionaryListCtrl * local = dynamic_cast<DictionaryListCtrl*>(m_local);
     m_progress = NULL;
     m_sd->Enable(false);
     Users::iterator it;
@@ -44,12 +46,13 @@ LibraryFrame::LibraryFrame() : m_pulser(this)
     }
     m_user->SetSelection(0);
     m_status->SetFieldsCount(2, fieldWidths);
-    m_local->InsertColumn(0, _("Filename"), wxLIST_FORMAT_LEFT, 160);
-    m_local->InsertColumn(1, _("Size"), wxLIST_FORMAT_LEFT, 60);
-    m_remote->InsertColumn(0, _("Filename"));
-    m_remote->SetColumnWidth(0, 210);
-    m_remote->SetFont(wxFont(8, 76, 90, 90, false, wxEmptyString));
-    m_local->SetFont(wxFont(8, 76, 90, 90, false, wxEmptyString));
+    local->InsertColumn(0, _("Filename"));
+    local->InsertColumn(1, _("Size"));
+    local->SetColumnWidths(60);
+    local->SetFont(wxFont(8, 76, 90, 90, false, wxEmptyString));
+    remote->InsertColumn(0, _("Filename"));
+    remote->SetColumnWidths(0);
+    remote->SetFont(wxFont(8, 76, 90, 90, false, wxEmptyString));
 }
 
 LibraryFrame::~LibraryFrame()

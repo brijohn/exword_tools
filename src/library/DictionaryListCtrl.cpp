@@ -28,6 +28,15 @@ void DictionaryListCtrl::SetDictionaries(DictionaryArray items)
     DeleteAllItems();
     SetItemCount(m_items.GetCount());
     RefreshItems(0, GetItemCount());
+    SetColumnWidths(wxLIST_AUTOSIZE);
+}
+
+void DictionaryListCtrl::SetColumnWidths(int lastWidth)
+{
+    int w;
+    GetClientSize(&w, NULL);
+    SetColumnWidth(1, lastWidth);
+    SetColumnWidth(0, w - GetColumnWidth(1));
 }
 
 void DictionaryListCtrl::ClearDictionaries()
@@ -36,6 +45,7 @@ void DictionaryListCtrl::ClearDictionaries()
     SetItemCount(0);
     RefreshItems(0, 0);
     DeleteAllItems();
+    SetColumnWidths(wxLIST_AUTOSIZE_USEHEADER);
 }
 
 Dictionary* DictionaryListCtrl::GetSelectedDictionary()
