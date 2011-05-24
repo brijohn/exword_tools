@@ -6,6 +6,7 @@ CASIO Ex-Word dictionaries using the libexword library.
 Included applications:
    * TextLoader
    * Library
+   * LibraryInstaller
 
 
 TextLoader
@@ -20,3 +21,20 @@ Library
 This application is an implementation of Casio's CasioLibrary
 program. It allows you to install add-ons onto an exword device as
 well as removing installed add-ons.
+
+LibraryInstaller
+--------------------------------------------------
+This application is used to unpack and install add-on dictionaries
+onto your local computer which can then be managed by the Library
+program. It installs the add-ons into the <AppData>/exword directory.
+<AppData> points to the following locations depending on your OS:
+	Unix/Linux: ~/.local/share/
+	Windows: C:\Documents and Settings\<Username>\Application Data\
+	Mac OSX: ~/Library/Application Support/
+
+The wizard will also decrypt the unpacked files however on Non-windows
+systems wine is required in order to execute the exword_decrypt.exe program.
+
+exword_decrypt.exe must be installed in the <AppData>/exword directory.
+
+exword_decrypt url: http://github.com/downloads/brijohn/libexword/exword_decrypt.zip
