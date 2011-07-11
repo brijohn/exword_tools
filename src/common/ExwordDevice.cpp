@@ -83,50 +83,45 @@ bool Exword::Connect(ExwordMode mode, ExwordRegion region)
     m_connected = false;
     switch(mode) {
     case LIBRARY:
-        options |= OPEN_LIBRARY;
+        options |= EXWORD_MODE_LIBRARY;
         break;
     case TEXT:
-        options |= OPEN_TEXT;
+        options |= EXWORD_MODE_TEXT;
         break;
     case CD:
-        options |= OPEN_CD;
+        options |= EXWORD_MODE_CD;
     }
     switch(region) {
     case JAPANESE:
-        options |= LOCALE_JA;
+        options |= EXWORD_REGION_JA;
         break;
     case CHINESE:
-        options |= LOCALE_CN;
+        options |= EXWORD_REGION_CN;
         break;
     case KOREAN:
-        options |= LOCALE_KR;
+        options |= EXWORD_REGION_KR;
         break;
     case GERMAN:
-        options |= LOCALE_DE;
+        options |= EXWORD_REGION_DE;
         break;
     case SPANISH:
-        options |= LOCALE_ES;
+        options |= EXWORD_REGION_ES;
         break;
     case FRENCH:
-        options |= LOCALE_FR;
+        options |= EXWORD_REGION_FR;
         break;
     case RUSSIAN:
-        options |= LOCALE_RU;
+        options |= EXWORD_REGION_RU;
         break;
     }
     m_device = exword_open2(options);
     if (m_device) {
-        if (exword_connect(m_device) != 0x20) {
-            exword_close(m_device);
-            m_device = NULL;
-        } else {
-            exword_setpath(m_device, (uint8_t*)INTERNAL_MEM, 0);
-            exword_register_callbacks(m_device, get_file, put_file, &m_callback);
-            m_connected = true;
-            m_mode = mode;
-            m_region = region;
-            m_storage = INTERNAL;
-        }
+        exword_setpath(m_device, (uint8_t*)"\\_INTERNAL_00", 0);
+        exword_register_transfer_callbacks(m_device, get_file, put_file, &m_callback);
+        m_connected = true;
+        m_mode = mode;
+        m_region = region;
+        m_storage = INTERNAL;
     }
     return m_connected;
 }
@@ -134,8 +129,7 @@ bool Exword::Connect(ExwordMode mode, ExwordRegion region)
 void Exword::Disconnect()
 {
     if (IsConnected()) {
-        exword_register_callbacks(m_device, NULL, NULL, NULL);
-        exword_disconnect(m_device);
+        exword_register_transfer_callbacks(m_device, NULL, NULL, NULL);
         exword_close(m_device);
         m_device = NULL;
         m_connected = false;
@@ -161,7 +155,7 @@ wxMemoryBuffer Exword::Reset(wxString user)
     memcpy(ai.blk1, "FFFFFFFFFFFFFFFF", 16);
     strncpy((char*)ai.blk2, user.utf8_str().data(), 24);
     strncpy(u.name, user.utf8_str().data(), 16);
-    exword_setpath(m_device, (uint8_t*)INTERNAL_MEM, 0);
+    exword_setpath(m_device, (uint8_t*)"\\_INTERNAL_00", 0);
     exword_authinfo(m_device, &ai);
     exword_userid(m_device, u);
     key.AppendData(ai.challenge, 20);
@@ -185,16 +179,16 @@ bool Exword::Authenticate(wxString user, wxMemoryBuffer& key)
     memcpy(ai.blk1, "FFFFFFFFFFFFFFFF", 16);
     strncpy((char*)ai.blk2, user.utf8_str().data(), 24);
     strncpy(u.name, user.utf8_str().data(), 16);
-    exword_setpath(m_device, (uint8_t*)INTERNAL_MEM, 0);
+    exword_setpath(m_device, (uint8_t*)"\\_INTERNAL_00", 0);
     rsp = exword_authchallenge(m_device, c);
-    if (rsp == 0x20) {
-        exword_setpath(m_device, (uint8_t*)ROOT, 0);
+    if (rsp == EXWORD_SUCCESS) {
+        exword_setpath(m_device, (uint8_t*)"", 0);
         exword_list(m_device, &entries, &count);
         for (int i = 0; i < count; i++) {
             if (strcmp((const char*)entries[i].name, "_SD_00") == 0) {
-                exword_setpath(m_device, (uint8_t*)SD_CARD, 0);
+                exword_setpath(m_device, (uint8_t*)"\\_SD_00", 0);
                 rsp = exword_authchallenge(m_device, c);
-                if (rsp != 0x20)
+                if (rsp != EXWORD_SUCCESS)
                     exword_authinfo(m_device, &ai);
              }
         }
@@ -262,7 +256,7 @@ bool Exword::UploadFile(wxFileName filename)
     if (file.IsOpened()) {
         char *data = new char[file.Length()];
         if (file.Read(data, file.Length()) == file.Length()) {
-            if (exword_send_file(m_device, (char*)wxConvLocal.cWX2MB(filename.GetFullName()).data(), data, file.Length()) == 0x20)
+            if (exword_send_file(m_device, (char*)wxConvLocal.cWX2MB(filename.GetFullName()).data(), data, file.Length()) == EXWORD_SUCCESS)
                 success = true;
         }
     }
@@ -277,7 +271,7 @@ bool Exword::DeleteFile(wxString filename)
         rsp = exword_remove_file(m_device, (char*)wxConvLocal.cWX2MB(filename).data(), 1);
     else
         rsp = exword_remove_file(m_device, (char*)wxConvLocal.cWX2MB(filename).data(), 0);
-    return (rsp == 0x20);
+    return (rsp == EXWORD_SUCCESS);
 }
 
 bool Exword::InstallDictionary(LocalDictionary *dict)
@@ -298,7 +292,7 @@ bool Exword::InstallDictionary(LocalDictionary *dict)
         rsp = exword_unlock(m_device);
         rsp |= exword_cname(m_device, (char*)dict->GetName().mb_str(wxCSConv(wxT("SJIS"))).data(), (char*)dict->GetId().utf8_str().data());
         rsp |= exword_cryptkey(m_device, &ck);
-        if (rsp == 0x20) {
+        if (rsp == EXWORD_SUCCESS) {
             files = dict->GetFiles();
             exword_setpath(m_device, (uint8_t*)content_path.utf8_str().data(), 1);
             for (unsigned int i = 0; i < files.GetCount(); ++i) {
@@ -323,7 +317,7 @@ bool Exword::InstallDictionary(LocalDictionary *dict)
             exword_setpath(m_device, (uint8_t*)user_path.utf8_str().data(), 1);
         }
         rsp |= exword_lock(m_device);
-        success = (rsp == 0x20);
+        success = (rsp == EXWORD_SUCCESS);
     }
     return success;
 }
@@ -343,10 +337,10 @@ bool Exword::RemoveDictionary(RemoteDictionary *dict)
         rsp = exword_unlock(m_device);
         rsp |= exword_cname(m_device, (char*)dict->GetName().mb_str(wxCSConv(wxT("SJIS"))).data(), (char*)dict->GetId().utf8_str().data());
         rsp |= exword_cryptkey(m_device, &ck);
-        if (rsp == 0x20)
+        if (rsp == EXWORD_SUCCESS)
             rsp |= exword_remove_file(m_device, (char*)dict->GetId().utf8_str().data(), 0);
         rsp |= exword_lock(m_device);
-        success = rsp == 0x20;
+        success = (rsp == EXWORD_SUCCESS);
     }
     return success;
 }
@@ -357,7 +351,7 @@ Capacity Exword::GetCapacity()
     int rsp;
     exword_setpath(m_device, (uint8_t*)GetStoragePath().utf8_str().data(), 0);
     rsp = exword_get_capacity(m_device, &cap);
-    if (rsp != 0x20)
+    if (rsp != EXWORD_SUCCESS)
         return Capacity();
     return Capacity(cap.total, cap.free);
 }
@@ -370,10 +364,10 @@ wxArrayString Exword::List(wxString path, wxString pattern)
     wxArrayString list;
     wxString filename;
     wxString fullpath = GetStoragePath() + path;
-    if (exword_setpath(m_device, (uint8_t*)fullpath.utf8_str().data(), 0) == 0x20) {
-        if (exword_list(m_device, &entries, &count) == 0x20) {
+    if (exword_setpath(m_device, (uint8_t*)fullpath.utf8_str().data(), 0) == EXWORD_SUCCESS) {
+        if (exword_list(m_device, &entries, &count) == EXWORD_SUCCESS) {
             for (int i = 0; i < count; i++) {
-                if (entries[i].flags & LIST_F_UNICODE)
+                if (ENTRY_IS_UNICODE(&entries[i]))
                     filename = wxString(conv.cMB2WC((const char*)entries[i].name));
                 else
                     filename = wxString::FromAscii((const char*)entries[i].name);
@@ -391,8 +385,8 @@ bool Exword::IsSdInserted()
     exword_dirent_t *entries;
     uint16_t count;
     bool found = false;
-    if (exword_setpath(m_device, (uint8_t*)ROOT, 0) == 0x20) {
-        if (exword_list(m_device, &entries, &count) == 0x20) {
+    if (exword_setpath(m_device, (uint8_t*)"", 0) == EXWORD_SUCCESS) {
+        if (exword_list(m_device, &entries, &count) == EXWORD_SUCCESS) {
             for (int i = 0; i < count; i++) {
                 if (strcmp((const char*)entries[i].name, "_SD_00") == 0)
                     found = true;
@@ -424,7 +418,7 @@ Model Exword::GetModel()
     Model modelInfo;
     exword_model_t model;
     memset(&model, 0, sizeof(exword_model_t));
-    if (exword_get_model(m_device, &model) == 0x20) {
+    if (exword_get_model(m_device, &model) == EXWORD_SUCCESS) {
         modelInfo = ModelDatabase::Get()->Lookup(wxString::FromAscii(model.model),
                                                  wxString::FromAscii(model.sub_model),
                                                  wxString::FromAscii(model.ext_model));
@@ -458,7 +452,7 @@ void Exword::ReadAdmini(wxMemoryBuffer& buffer)
         exword_setpath(m_device, (uint8_t*)GetStoragePath().utf8_str().data(), 0);
         for (int i = 0; admini_list[i] != NULL; i++) {
             rsp = exword_get_file(m_device, (char*)admini_list[i], &data, &length);
-            if (rsp == 0x20 && length > 0) {
+            if (rsp == EXWORD_SUCCESS && length > 0) {
                 buffer.AppendData(data, length);
                 free(data);
                 break;
