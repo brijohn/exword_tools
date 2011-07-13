@@ -203,15 +203,17 @@ DictionaryInfo Exword::GetDictionaryInfo(wxString id)
 {
     unsigned int i;
     wxMemoryBuffer admini(180);
-    ReadAdmini(admini);
-    char *data = (char *)admini.GetData();
-    if (admini.GetDataLen() > 0) {
-        for (i = 0; i < admini.GetDataLen(); i += 180) {
-            if (wxString::FromAscii(data + i) == id)
-                break;
+    if (IsConnected()) {
+        ReadAdmini(admini);
+        char *data = (char *)admini.GetData();
+        if (admini.GetDataLen() > 0) {
+            for (i = 0; i < admini.GetDataLen(); i += 180) {
+                if (wxString::FromAscii(data + i) == id)
+                    break;
+            }
+            if (i < admini.GetDataLen())
+                return DictionaryInfo(data + i, data + i + 48, data + i + 32);
         }
-        if (i < admini.GetDataLen())
-            return DictionaryInfo(data + i, data + i + 48, data + i + 32);
     }
     return InvalidDictionary;
 }
@@ -238,11 +240,13 @@ DictionaryArray Exword::GetRemoteDictionaries()
 {
     DictionaryArray list;
     wxMemoryBuffer admini(180);
-    ReadAdmini(admini);
-    char *data = (char *)admini.GetData();
-    if (admini.GetDataLen() > 0) {
-        for (unsigned int i = 0; i < admini.GetDataLen(); i += 180) {
-            list.Add(new RemoteDictionary(wxString::FromAscii(data + i), this));
+    if (IsConnected()) {
+        ReadAdmini(admini);
+       char *data = (char *)admini.GetData();
+        if (admini.GetDataLen() > 0) {
+            for (unsigned int i = 0; i < admini.GetDataLen(); i += 180) {
+                list.Add(new RemoteDictionary(wxString::FromAscii(data + i), this));
+            }
         }
     }
     return list;
@@ -253,11 +257,13 @@ bool Exword::UploadFile(wxFileName filename)
     char *data;
     wxFile file(filename.GetFullPath());
     bool success = false;
-    if (file.IsOpened()) {
-        char *data = new char[file.Length()];
-        if (file.Read(data, file.Length()) == file.Length()) {
-            if (exword_send_file(m_device, (char*)wxConvLocal.cWX2MB(filename.GetFullName()).data(), data, file.Length()) == EXWORD_SUCCESS)
-                success = true;
+    if (IsConnected()) {
+        if (file.IsOpened()) {
+            char *data = new char[file.Length()];
+            if (file.Read(data, file.Length()) == file.Length()) {
+                if (exword_send_file(m_device, (char*)wxConvLocal.cWX2MB(filename.GetFullName()).data(), data, file.Length()) == EXWORD_SUCCESS)
+                    success = true;
+            }
         }
     }
     return success;
@@ -266,8 +272,13 @@ bool Exword::UploadFile(wxFileName filename)
 bool Exword::DeleteFile(wxString filename)
 {
     int rsp;
-    Model model = GetModel();
-    if (m_mode == TEXT && model.GetSeries() >=5)
+    Model model;
+
+    if (!IsConnected())
+         return false;
+
+    model = GetModel();
+    if (m_mode == TEXT && model.GetSeries() >= 5)
         rsp = exword_remove_file(m_device, (char*)wxConvLocal.cWX2MB(filename).data(), 1);
     else
         rsp = exword_remove_file(m_device, (char*)wxConvLocal.cWX2MB(filename).data(), 0);
@@ -281,6 +292,10 @@ bool Exword::InstallDictionary(LocalDictionary *dict)
     Capacity cap;
     wxArrayString files;
     int rsp;
+
+    if (!IsConnected())
+        return success;
+
     wxString content_path = GetStoragePath() + dict->GetId() + wxT("\\_CONTENT");
     wxString user_path = GetStoragePath() + dict->GetId() + wxT("\\_USER");
     memset(&ck, 0, sizeof(exword_cryptkey_t));
@@ -327,6 +342,10 @@ bool Exword::RemoveDictionary(RemoteDictionary *dict)
     bool success = false;
     exword_cryptkey_t ck;
     int rsp;
+
+    if (!IsConnected())
+        return success;
+
     if (dict->Exists()) {
         memset(&ck, 0, sizeof(exword_cryptkey_t));
         memcpy(ck.blk1, key1, 2);
@@ -347,12 +366,14 @@ bool Exword::RemoveDictionary(RemoteDictionary *dict)
 
 Capacity Exword::GetCapacity()
 {
-    exword_capacity_t cap;
+    exword_capacity_t cap = {0,};
     int rsp;
-    exword_setpath(m_device, (uint8_t*)GetStoragePath().utf8_str().data(), 0);
-    rsp = exword_get_capacity(m_device, &cap);
-    if (rsp != EXWORD_SUCCESS)
-        return Capacity();
+    if (IsConnected()) {
+        exword_setpath(m_device, (uint8_t*)GetStoragePath().utf8_str().data(), 0);
+        rsp = exword_get_capacity(m_device, &cap);
+        if (rsp != EXWORD_SUCCESS)
+            return Capacity();
+    }
     return Capacity(cap.total, cap.free);
 }
 
@@ -364,17 +385,19 @@ wxArrayString Exword::List(wxString path, wxString pattern)
     wxArrayString list;
     wxString filename;
     wxString fullpath = GetStoragePath() + path;
-    if (exword_setpath(m_device, (uint8_t*)fullpath.utf8_str().data(), 0) == EXWORD_SUCCESS) {
-        if (exword_list(m_device, &entries, &count) == EXWORD_SUCCESS) {
-            for (int i = 0; i < count; i++) {
-                if (ENTRY_IS_UNICODE(&entries[i]))
-                    filename = wxString(conv.cMB2WC((const char*)entries[i].name));
-                else
-                    filename = wxString::FromAscii((const char*)entries[i].name);
-                if (wxMatchWild(pattern.Lower(), filename.Lower(), true))
-                    list.Add(filename);
+    if (IsConnected()) {
+        if (exword_setpath(m_device, (uint8_t*)fullpath.utf8_str().data(), 0) == EXWORD_SUCCESS) {
+            if (exword_list(m_device, &entries, &count) == EXWORD_SUCCESS) {
+                for (int i = 0; i < count; i++) {
+                    if (ENTRY_IS_UNICODE(&entries[i]))
+                        filename = wxString(conv.cMB2WC((const char*)entries[i].name));
+                    else
+                        filename = wxString::FromAscii((const char*)entries[i].name);
+                    if (wxMatchWild(pattern.Lower(), filename.Lower(), true))
+                        list.Add(filename);
+                }
+                exword_free_list(entries);
             }
-            exword_free_list(entries);
         }
     }
     return list;
@@ -385,6 +408,10 @@ bool Exword::IsSdInserted()
     exword_dirent_t *entries;
     uint16_t count;
     bool found = false;
+
+    if (!IsConnected())
+         return found;
+
     if (exword_setpath(m_device, (uint8_t*)"", 0) == EXWORD_SUCCESS) {
         if (exword_list(m_device, &entries, &count) == EXWORD_SUCCESS) {
             for (int i = 0; i < count; i++) {
@@ -394,6 +421,7 @@ bool Exword::IsSdInserted()
             exword_free_list(entries);
         }
     }
+
     return found;
 }
 
@@ -412,24 +440,25 @@ bool Exword::SetStorage(ExwordStorage storage)
     return true;
 }
 
-
 Model Exword::GetModel()
 {
     Model modelInfo;
     exword_model_t model;
     memset(&model, 0, sizeof(exword_model_t));
-    if (exword_get_model(m_device, &model) == EXWORD_SUCCESS) {
-        modelInfo = ModelDatabase::Get()->Lookup(wxString::FromAscii(model.model),
-                                                 wxString::FromAscii(model.sub_model),
-                                                 wxString::FromAscii(model.ext_model));
-        if (modelInfo.GetSeries() == 0) {
-            if ((model.capabilities & CAP_F) &&
-                (model.capabilities & CAP_C)) {
-                modelInfo = Model(5);
-            } else if (model.capabilities & CAP_P) {
-                modelInfo = Model(4);
-            } else {
-                modelInfo = Model(3);
+    if (IsConnected()) {
+        if (exword_get_model(m_device, &model) == EXWORD_SUCCESS) {
+            modelInfo = ModelDatabase::Get()->Lookup(wxString::FromAscii(model.model),
+                                                     wxString::FromAscii(model.sub_model),
+                                                     wxString::FromAscii(model.ext_model));
+            if (modelInfo.GetSeries() == 0) {
+                if ((model.capabilities & CAP_F) &&
+                    (model.capabilities & CAP_C)) {
+                    modelInfo = Model(5);
+                } else if (model.capabilities & CAP_P) {
+                    modelInfo = Model(4);
+                } else {
+                    modelInfo = Model(3);
+                }
             }
         }
     }
@@ -448,21 +477,17 @@ void Exword::ReadAdmini(wxMemoryBuffer& buffer)
 {
     int rsp, length;
     char *data;
-    if (IsConnected()) {
-        exword_setpath(m_device, (uint8_t*)GetStoragePath().utf8_str().data(), 0);
-        for (int i = 0; admini_list[i] != NULL; i++) {
-            rsp = exword_get_file(m_device, (char*)admini_list[i], &data, &length);
-            if (rsp == EXWORD_SUCCESS && length > 0) {
-                buffer.AppendData(data, length);
-                free(data);
-                break;
-            }
+    exword_setpath(m_device, (uint8_t*)GetStoragePath().utf8_str().data(), 0);
+    for (int i = 0; admini_list[i] != NULL; i++) {
+        rsp = exword_get_file(m_device, (char*)admini_list[i], &data, &length);
+        if (rsp == EXWORD_SUCCESS && length > 0) {
+            buffer.AppendData(data, length);
             free(data);
+            break;
         }
+        free(data);
     }
 }
-
-
 
 wxString Exword::GetUserDataDir()
 {
