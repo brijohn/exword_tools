@@ -25,13 +25,12 @@
 #include <wx/thread.h>
 
 enum {
-        myID_UPDATE = 1,
+        myID_START = 1,
         myID_FINISH,
-        myID_START,
 };
 
 BEGIN_DECLARE_EVENT_TYPES()
-        DECLARE_LOCAL_EVENT_TYPE(myEVT_UPDATE_PROGRESS, 1)
+        DECLARE_LOCAL_EVENT_TYPE(myEVT_THREAD, 1)
 END_DECLARE_EVENT_TYPES()
 
 class TransferThread : public wxThread
@@ -42,7 +41,7 @@ class TransferThread : public wxThread
         virtual void *Entry();
         virtual void OnExit();
         virtual void *Action() = 0;
-        void FireEvent(wxString text, int percent, int id);
+        void FireEvent(wxString text, int id);
     protected:
         void *m_data;
         wxFrame *m_frame;

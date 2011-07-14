@@ -40,26 +40,33 @@ BEGIN_EVENT_TABLE(TextLoaderFrame, TextLoaderGUI)
     EVT_BUTTON(XRCID("m_delete"), TextLoaderFrame::OnDelete)
     EVT_RADIOBUTTON(XRCID("m_internal"), TextLoaderFrame::OnInternal)
     EVT_RADIOBUTTON(XRCID("m_sd"), TextLoaderFrame::OnSDCard)
-    EVT_COMMAND(myID_UPDATE, myEVT_UPDATE_PROGRESS, TextLoaderFrame::OnThreadUpdate)
-    EVT_COMMAND(myID_START, myEVT_UPDATE_PROGRESS, TextLoaderFrame::OnThreadStart)
-    EVT_COMMAND(myID_FINISH, myEVT_UPDATE_PROGRESS, TextLoaderFrame::OnThreadFinish)
+    EVT_COMMAND(myID_START, myEVT_THREAD, TextLoaderFrame::OnThreadStart)
+    EVT_COMMAND(myID_FINISH, myEVT_THREAD, TextLoaderFrame::OnThreadFinish)
+    EVT_DISCONNECT(TextLoaderFrame::OnDisconnect)
+    EVT_FILE_TRANSFER(TextLoaderFrame::OnTransfer)
 END_EVENT_TABLE()
 
 TextLoaderFrame::TextLoaderFrame()
 {
     int fieldWidths[] = {175, -1};
-    m_progress = NULL;
     m_sd->Enable(false);
     m_status->SetFieldsCount(2, fieldWidths);
     m_filelist->InsertColumn(0, _("Filename"));
     m_filelist->SetColumnWidth(0, 485);
     m_filelist->SetFont(wxFont(8, 76, 90, 90, false, wxEmptyString));
     m_filelist->SetDropTarget(new ExwordFileDropTarget(this));
+    m_exword.SetEventTarget(this);
+    m_progress = new ProgressDialog(this, wxT(""));
 }
 
 TextLoaderFrame::~TextLoaderFrame()
 {
+    m_exword.SetEventTarget(NULL);
     m_exword.Disconnect();
+    if (m_progress) {
+        m_progress->Destroy();
+        m_progress = NULL;
+    }
 }
 
 ExwordRegion TextLoaderFrame::GetRegionFromString(wxString name)
@@ -167,28 +174,34 @@ void TextLoaderFrame::OnSDCard(wxCommandEvent& event)
 
 void TextLoaderFrame::OnThreadStart(wxCommandEvent& event)
 {
-    if (m_progress) {
-        m_progress->Destroy();
-        m_progress = NULL;
-    }
-    m_progress = new ProgressDialog(this, event.GetString());
+    m_progress->Update(0, event.GetString());
+    m_progress->Show();
 }
 
-void TextLoaderFrame::OnThreadUpdate(wxCommandEvent& event)
+void TextLoaderFrame::OnTransfer(wxTransferEvent& event)
 {
-    unsigned long percent = event.GetInt();
+    unsigned long percent = ((float)event.GetTransferred() / (float)event.GetLength()) * 100;
     wxString text;
-    text.Printf(_("Copying %s (%lu%%)"), event.GetString().c_str(), percent);
-    if (m_progress)
+    text.Printf(_("Copying %s (%lu%%)"), event.GetFilename().c_str(), percent);
+    if (m_progress->IsShown())
         m_progress->Update(percent, text);
 }
 
 void TextLoaderFrame::OnThreadFinish(wxCommandEvent& event)
 {
-    if (m_progress) {
-        m_progress->Show(false);
-    }
+    m_progress->Show(false);
     UpdateFilelist();
     UpdateStatusbar();
 }
 
+void TextLoaderFrame::OnDisconnect(wxCommandEvent& event)
+{
+    int reason = event.GetInt();
+    m_region->Enable(true);
+    m_sd->Enable(false);
+    m_filelist->DeleteAllItems();
+    m_internal->SetValue(true);
+    m_connect->SetLabel(_("Connect"));
+    m_exword.Disconnect();
+    UpdateStatusbar();
+}

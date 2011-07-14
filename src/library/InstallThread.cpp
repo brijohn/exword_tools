@@ -22,25 +22,13 @@
 #include "Dictionary.h"
 #include "InstallThread.h"
 
-class InstallCallback : public ExwordCallback {
-    public:
-        InstallCallback(void *data) : ExwordCallback(data) {};
-        virtual void PutFile(wxString filename, unsigned long transferred, unsigned long length) {
-            InstallThread *thread = (InstallThread*)m_data;
-            unsigned long percent = ((float)transferred / (float)length) * 100;
-            thread->FireEvent(filename, percent, myID_UPDATE);
-        };
-};
-
 void *InstallThread::Action()
 {
     LocalDictionary *dict = dynamic_cast<LocalDictionary*>((Dictionary*)m_data);
     if (dict) {
-        FireEvent(wxT(""), 0, myID_START);
-        m_exword->SetFileCallback(new InstallCallback(this));
+        FireEvent(wxT(""), myID_START);
         m_exword->InstallDictionary(dict);
-        m_exword->SetFileCallback(NULL);
-        FireEvent(wxT(""), 0, myID_FINISH);
+        FireEvent(wxT(""), myID_FINISH);
     }
     return NULL;
 }
@@ -51,9 +39,9 @@ void *RemoveThread::Action()
     RemoteDictionary *dict = dynamic_cast<RemoteDictionary*>((Dictionary*)m_data);
     if (dict) {
         message.Printf(_("Removing %s..."), dict->GetName().c_str());
-        FireEvent(message, 0, myID_START);
+        FireEvent(message, myID_START);
         m_exword->RemoveDictionary(dict);
-        FireEvent(wxT(""), 0, myID_FINISH);
+        FireEvent(wxT(""), myID_FINISH);
     }
     return NULL;
 }

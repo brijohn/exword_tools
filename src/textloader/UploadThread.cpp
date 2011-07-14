@@ -22,24 +22,12 @@
 
 #include "UploadThread.h"
 
-class UploadCallback : public ExwordCallback {
-    public:
-        UploadCallback(void *data) : ExwordCallback(data) {};
-        virtual void PutFile(wxString filename, unsigned long transferred, unsigned long length) {
-            UploadThread *thread = (UploadThread*)m_data;
-            unsigned long percent = ((float)transferred / (float)length) * 100;
-            thread->FireEvent(filename, percent, myID_UPDATE);
-        };
-};
-
-
 void *UploadThread::Action()
 {
     wxArrayString *files = (wxArrayString*)m_data;
     if (files) {
-        FireEvent(wxT(""), 0, myID_START);
+        FireEvent(wxT(""), myID_START);
         wxThread::Sleep(500);
-        m_exword->SetFileCallback(new UploadCallback(this));
         for (unsigned int i = 0; i < files->GetCount(); ++i) {
             wxFileName filename((*files)[i]);
             if (filename.GetExt().IsSameAs(wxT("txt"), false)) {
@@ -48,9 +36,8 @@ void *UploadThread::Action()
                 }
             }
         }
-        m_exword->SetFileCallback(NULL);
         wxThread::Sleep(500);
-        FireEvent(wxT(""), 0, myID_FINISH);
+        FireEvent(wxT(""), myID_FINISH);
     }
     return NULL;
 }

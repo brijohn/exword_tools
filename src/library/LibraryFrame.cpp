@@ -27,18 +27,18 @@ BEGIN_EVENT_TABLE(LibraryFrame, LibraryGUI)
     EVT_RADIOBUTTON(XRCID("m_sd"), LibraryFrame::OnSDCard)
     EVT_BUTTON(XRCID("m_install"), LibraryFrame::OnInstall)
     EVT_BUTTON(XRCID("m_remove"), LibraryFrame::OnRemove)
-    EVT_COMMAND(myID_UPDATE, myEVT_UPDATE_PROGRESS, LibraryFrame::OnThreadUpdate)
-    EVT_COMMAND(myID_START, myEVT_UPDATE_PROGRESS, LibraryFrame::OnThreadStart)
-    EVT_COMMAND(myID_FINISH, myEVT_UPDATE_PROGRESS, LibraryFrame::OnThreadFinish)
-    EVT_TIMER(wxID_ANY, LibraryFrame::OnPulse)
+    EVT_COMMAND(myID_START, myEVT_THREAD, LibraryFrame::OnThreadStart)
+    EVT_COMMAND(myID_FINISH, myEVT_THREAD, LibraryFrame::OnThreadFinish)
+    EVT_DISCONNECT(LibraryFrame::OnDisconnect)
+    EVT_FILE_TRANSFER(LibraryFrame::OnTransfer)
+    EVT_TIMER(99, LibraryFrame::OnPulse)
 END_EVENT_TABLE()
 
-LibraryFrame::LibraryFrame() : m_pulser(this)
+LibraryFrame::LibraryFrame() : m_pulser(this, 1)
 {
     int fieldWidths[] = {175, -1};
     DictionaryListCtrl * remote = dynamic_cast<DictionaryListCtrl*>(m_remote);
     DictionaryListCtrl * local = dynamic_cast<DictionaryListCtrl*>(m_local);
-    m_progress = NULL;
     m_sd->Enable(false);
     Users::iterator it;
     for (it = m_users.begin(); it != m_users.end(); ++it) {
@@ -53,11 +53,18 @@ LibraryFrame::LibraryFrame() : m_pulser(this)
     remote->InsertColumn(0, _("Filename"));
     remote->SetColumnWidths(0);
     remote->SetFont(wxFont(8, 76, 90, 90, false, wxEmptyString));
+    m_exword.SetEventTarget(this);
+    m_progress = new ProgressDialog(this, wxT(""));
 }
 
 LibraryFrame::~LibraryFrame()
 {
+    m_exword.SetEventTarget(NULL);
     m_exword.Disconnect();
+    if (m_progress) {
+        m_progress->Destroy();
+        m_progress = NULL;
+    }
 }
 
 ExwordRegion LibraryFrame::GetRegionFromString(wxString name)
@@ -190,10 +197,10 @@ void LibraryFrame::OnRemove(wxCommandEvent& event)
     DictionaryListCtrl * remote = dynamic_cast<DictionaryListCtrl*>(m_remote);
     Dictionary * dict = remote->GetSelectedDictionary();
     if (dict) {
-        m_pulser.Start(100);
         RemoveThread *thread = new RemoveThread(this, &m_exword);
         if (!thread->Start(dict))
             wxMessageBox(_("Failed to start RemoveThread"), _("Error"), wxOK, this);
+        m_progress->SetPulseMode();
     } else {
         wxMessageBox(_("No remote dictionary selected"), _("Information"), wxOK, this);
     }
@@ -202,35 +209,46 @@ void LibraryFrame::OnRemove(wxCommandEvent& event)
 
 void LibraryFrame::OnThreadStart(wxCommandEvent& event)
 {
-    if (m_progress) {
-        m_progress->Destroy();
-        m_progress = NULL;
-    }
-    m_progress = new ProgressDialog(this, event.GetString());
-
+    m_progress->Update(0, event.GetString());
+    m_progress->Show();
 }
 
-void LibraryFrame::OnThreadUpdate(wxCommandEvent& event)
+void LibraryFrame::OnTransfer(wxTransferEvent& event)
 {
-    unsigned long percent = event.GetInt();
+    unsigned long percent = ((float)event.GetTransferred() / (float)event.GetLength()) * 100;
     wxString text;
-    text.Printf(_("Copying %s (%lu%%)"), event.GetString().c_str(), percent);
-    if (m_progress)
+    text.Printf(_("Copying %s (%lu%%)"), event.GetFilename().c_str(), percent);
+    if (m_progress->IsShown() && !event.GetDownload())
         m_progress->Update(percent, text);
 }
 
 void LibraryFrame::OnThreadFinish(wxCommandEvent& event)
 {
     DictionaryListCtrl * remote = dynamic_cast<DictionaryListCtrl*>(m_remote);
-    if (m_progress)
-        m_progress->Show(false);
+    m_progress->Show(false);
+    m_progress->SetPulseMode(false);
     remote->SetDictionaries(m_exword.GetRemoteDictionaries());
     UpdateStatusbar();
-    m_pulser.Stop();
 }
 
 void LibraryFrame::OnPulse(wxTimerEvent& event)
 {
-    if (m_progress != NULL)
+    if (m_progress->IsShown())
         m_progress->Pulse();
+}
+
+void LibraryFrame::OnDisconnect(wxCommandEvent& event)
+{
+    DictionaryListCtrl * remote = dynamic_cast<DictionaryListCtrl*>(m_remote);
+    DictionaryListCtrl * local = dynamic_cast<DictionaryListCtrl*>(m_local);
+    int reason = event.GetInt();
+    local->ClearDictionaries();
+    remote->ClearDictionaries();
+    m_user->Enable(true);
+    m_region->Enable(true);
+    m_sd->Enable(false);
+    m_internal->SetValue(true);
+    m_connect->SetLabel(_("Connect"));
+    m_exword.Disconnect();
+    UpdateStatusbar();
 }

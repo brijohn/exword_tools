@@ -28,6 +28,8 @@ ProgressDialog::ProgressDialog(wxWindow *parent, wxString message) : wxDialog(pa
     wxSize sizeLabel;
     wxSize sizeGauge;
     wxBoxSizer *sizer = new wxBoxSizer(wxVERTICAL);
+    m_winDisabler = NULL;
+    m_pulse = false;
     m_message = new wxStaticText(this, wxID_ANY, message);
     sizer->Add(m_message, 0, wxLEFT | wxTOP, 8);
     m_gauge = new wxGauge(this, wxID_ANY, 100, wxDefaultPosition, wxDefaultSize, wxGA_HORIZONTAL);
@@ -39,11 +41,7 @@ ProgressDialog::ProgressDialog(wxWindow *parent, wxString message) : wxDialog(pa
     sizeDlg.x = 350;
     SetSizerAndFit(sizer);
     SetClientSize(sizeDlg);
-    Centre();
 
-    m_winDisabler = new wxWindowDisabler(this);
-
-    Show();
     Enable();
 
     Update();
@@ -67,10 +65,11 @@ void ProgressDialog::Update(int value, const wxString& newmsg)
 
 void ProgressDialog::Pulse()
 {
-    m_gauge->Pulse();
-
-    wxYieldIfNeeded();
-    Update();
+    if (m_pulse) {
+        m_gauge->Pulse();
+        wxYieldIfNeeded();
+        Update();
+    }
 }
 
 bool ProgressDialog::Show(bool show)
@@ -78,7 +77,10 @@ bool ProgressDialog::Show(bool show)
     if (!show) {
         delete m_winDisabler;
         m_winDisabler = (wxWindowDisabler *)NULL;
+    } else {
+        m_winDisabler = new wxWindowDisabler(this);
     }
+    Centre();
     return wxDialog::Show(show);
 }
 

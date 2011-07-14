@@ -67,9 +67,10 @@ class LibraryFrame : public LibraryGUI
         void OnRemove(wxCommandEvent& event);
 
         void OnThreadStart(wxCommandEvent& event);
-        void OnThreadUpdate(wxCommandEvent& event);
+        void OnTransfer(wxTransferEvent& event);
         void OnThreadFinish(wxCommandEvent& event);
         void OnPulse(wxTimerEvent& event);
+        void OnDisconnect(wxCommandEvent& event);
     DECLARE_EVENT_TABLE();
 };
 

@@ -21,7 +21,7 @@
 
 #include "TransferThread.h"
 
-DEFINE_LOCAL_EVENT_TYPE(myEVT_UPDATE_PROGRESS)
+DEFINE_LOCAL_EVENT_TYPE(myEVT_THREAD)
 
 TransferThread::TransferThread(wxFrame *frame)
         : wxThread(wxTHREAD_DETACHED)
@@ -42,11 +42,10 @@ void TransferThread::OnExit()
 {
 }
 
-void TransferThread::FireEvent(wxString text, int percent, int id)
+void TransferThread::FireEvent(wxString text, int id)
 {
-    wxCommandEvent event(myEVT_UPDATE_PROGRESS, id);
+    wxCommandEvent event(myEVT_THREAD, id);
     event.SetString(text);
-    event.SetInt(percent);
     wxPostEvent(m_frame, event);
 }
 

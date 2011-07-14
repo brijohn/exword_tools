@@ -64,8 +64,10 @@ class TextLoaderFrame : public TextLoaderGUI
         void OnSDCard(wxCommandEvent& event);
 
         void OnThreadStart(wxCommandEvent& event);
-        void OnThreadUpdate(wxCommandEvent& event);
+        void OnTransfer(wxTransferEvent& event);
         void OnThreadFinish(wxCommandEvent& event);
+
+        void OnDisconnect(wxCommandEvent& event);
     DECLARE_EVENT_TABLE();
 };
 

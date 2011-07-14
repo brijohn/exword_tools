@@ -35,9 +35,11 @@ class ProgressDialog : public wxDialog
         virtual void Pulse();
         virtual void Update() { wxDialog::Update(); };
         virtual bool Show(bool show = true);
+        void SetPulseMode(bool pulse = true) { m_pulse = pulse; }
         void OnClose(wxCloseEvent& event);
 
     private:
+        bool m_pulse;
         wxGauge *m_gauge;
         wxStaticText *m_message;
         wxWindowDisabler *m_winDisabler;

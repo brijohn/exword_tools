@@ -59,16 +59,54 @@ class Capacity {
         unsigned long m_free;
 };
 
-class ExwordCallback {
+BEGIN_DECLARE_EVENT_TYPES()
+    DECLARE_LOCAL_EVENT_TYPE(myEVT_DISCONNECT, 1)
+    DECLARE_LOCAL_EVENT_TYPE(myEVT_FILE_TRANSFER, 2)
+END_DECLARE_EVENT_TYPES()
+
+class wxTransferEvent: public wxEvent
+{
     public:
-        ExwordCallback(void *data) { m_data = data; };
-        virtual void PutFile(wxString filename, unsigned long transferred, unsigned long length) {};
-        virtual void GetFile(wxString filename, unsigned long transferred, unsigned long length) {};
-    protected:
-        void *m_data;
+        wxTransferEvent(wxEventType eventType = wxEVT_NULL, int id = 0)
+               : wxEvent(1, myEVT_FILE_TRANSFER) {
+            m_length = m_transferred = 0;
+            m_download = false;
+        };
+        wxTransferEvent(const wxTransferEvent& object)
+            : wxEvent(object),
+              m_download(object.m_download),
+              m_length(object.m_length),
+              m_transferred(object.m_transferred),
+              m_filename(object.m_filename)
+        {}
+
+        virtual wxEvent* Clone() const { return new wxTransferEvent(*this); }
+        void SetFilename(wxString filename) { m_filename = filename; }
+        void SetLength(unsigned long length) { m_length = length; }
+        void SetTransferred(unsigned long transferred) { m_transferred = transferred; }
+        void SetDownload(bool download) { m_download = download; }
+        wxString GetFilename() { return m_filename; }
+        unsigned long GetLength() { return m_length; }
+        unsigned long GetTransferred() { return m_transferred; }
+        bool GetDownload() { return m_download; }
+    private:
+        bool m_download;
+        wxString m_filename;
+        unsigned long m_length;
+        unsigned long m_transferred;
 };
 
-class Exword {
+typedef void (wxEvtHandler::*wxTransferEventFunction)(wxTransferEvent&);
+
+#define EVT_FILE_TRANSFER(fn) \
+    DECLARE_EVENT_TABLE_ENTRY(myEVT_FILE_TRANSFER, wxID_ANY, -1, \
+    (wxObjectEventFunction) (wxEventFunction)  \
+    wxStaticCastEvent( wxTransferEventFunction, & fn ), (wxObject *) NULL ),
+
+#define EVT_DISCONNECT(fn) EVT_COMMAND(wxID_ANY, myEVT_DISCONNECT, fn)
+
+
+class Exword : public wxEvtHandler {
     public:
         Exword();
         Exword(ExwordMode mode, ExwordRegion region = JAPANESE);
@@ -90,18 +128,24 @@ class Exword {
         bool InstallDictionary(LocalDictionary *dict);
         bool RemoveDictionary(RemoteDictionary *dict);
         bool SetStorage(ExwordStorage storage);
-        void SetFileCallback(ExwordCallback *cb);
+        void SetEventTarget(wxWindow *target);
         Model GetModel();
+        void OnTimer(wxTimerEvent& event);
+        friend void disconnect_event_cb(int reason, void *data);
+        friend void put_file_cb(char * filename, uint32_t transferred, uint32_t length, void *data);
+        friend void get_file_cb(char * filename, uint32_t transferred, uint32_t length, void *data);
     private:
         void ReadAdmini(wxMemoryBuffer& buffer);
         wxString GetStoragePath();
     private:
         exword_t *m_device;
         bool m_connected;
-        ExwordCallback *m_callback;
+	wxTimer m_timer;
+	wxWindow *m_eventTarget;
         ExwordStorage m_storage;
         ExwordMode m_mode;
         ExwordRegion m_region;
+    DECLARE_EVENT_TABLE();
 };
 
 #endif

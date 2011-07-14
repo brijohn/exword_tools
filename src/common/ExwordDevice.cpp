@@ -26,6 +26,12 @@
 #include "ExwordDevice.h"
 #include "Dictionary.h"
 
+DEFINE_LOCAL_EVENT_TYPE(myEVT_DISCONNECT)
+DEFINE_LOCAL_EVENT_TYPE(myEVT_FILE_TRANSFER)
+
+BEGIN_EVENT_TABLE(Exword, wxEvtHandler)
+    EVT_TIMER(99, Exword::OnTimer)
+END_EVENT_TABLE()
 
 static char key1[17] =
 	"\x42\x72\xb7\xb5\x9e\x30\x83\x45\xc3\xb5\x41\x53\x71\xc4\x95\x00";
@@ -41,25 +47,47 @@ static const char *admini_list[] = {
 	NULL
 };
 
-void put_file(char * filename, uint32_t transferred, uint32_t length, void *data)
+void disconnect_event_cb(int reason, void *data)
 {
-    ExwordCallback **cb = (ExwordCallback**)data;
-    if (*cb != NULL)
-        (*cb)->PutFile(wxString::FromUTF8(filename), transferred, length);
+    Exword *self = (Exword*)data;
+    if (self->m_eventTarget) {
+        wxCommandEvent event(myEVT_DISCONNECT, 1);
+        event.SetInt(reason);
+        wxPostEvent(self->m_eventTarget, event);
+    }
 }
 
-void get_file(char * filename, uint32_t transferred, uint32_t length, void *data)
+void put_file_cb(char * filename, uint32_t transferred, uint32_t length, void *data)
 {
-    ExwordCallback **cb = (ExwordCallback**)data;
-    if (*cb != NULL)
-        (*cb)->GetFile(wxString::FromUTF8(filename), transferred, length);
+    Exword *self = (Exword*)data;
+    if (self->m_eventTarget) {
+        wxTransferEvent event(myEVT_FILE_TRANSFER, 1);
+        event.SetDownload(false);
+        event.SetLength(length);
+        event.SetTransferred(transferred);
+        event.SetFilename(wxString::FromUTF8(filename));
+        wxPostEvent(self->m_eventTarget, event);
+    }
 }
 
-Exword::Exword()
+void get_file_cb(char * filename, uint32_t transferred, uint32_t length, void *data)
+{
+    Exword *self = (Exword*)data;
+    if (self->m_eventTarget) {
+        wxTransferEvent event(myEVT_FILE_TRANSFER, 1);
+        event.SetDownload(true);
+        event.SetLength(length);
+        event.SetTransferred(transferred);
+        event.SetFilename(wxString::FromUTF8(filename));
+        wxPostEvent(self->m_eventTarget, event);
+    }
+}
+
+Exword::Exword() : m_timer(this, 99)
 {
     m_connected = false;
     m_device = NULL;
-    m_callback = NULL;
+    m_eventTarget = NULL;
     m_mode = LIBRARY;
     m_region = JAPANESE;
     m_storage = INTERNAL;
@@ -67,14 +95,17 @@ Exword::Exword()
 
 Exword::Exword(ExwordMode mode, ExwordRegion region)
 {
+    m_connected = false;
+    m_device = NULL;
+    m_eventTarget = NULL;
     Connect(mode, region);
 }
 
 Exword::~Exword()
 {
     Disconnect();
-    if (m_callback != NULL)
-        delete m_callback;
+    if (m_eventTarget != NULL)
+        m_eventTarget->RemoveEventHandler(this);
 }
 
 bool Exword::Connect(ExwordMode mode, ExwordRegion region)
@@ -117,11 +148,13 @@ bool Exword::Connect(ExwordMode mode, ExwordRegion region)
     m_device = exword_open2(options);
     if (m_device) {
         exword_setpath(m_device, (uint8_t*)"\\_INTERNAL_00", 0);
-        exword_register_transfer_callbacks(m_device, get_file, put_file, &m_callback);
+        exword_register_transfer_callbacks(m_device, get_file_cb, put_file_cb, this);
+        exword_register_disconnect_callback(m_device, disconnect_event_cb, this);
         m_connected = true;
         m_mode = mode;
         m_region = region;
         m_storage = INTERNAL;
+        m_timer.Start(100);
     }
     return m_connected;
 }
@@ -130,9 +163,11 @@ void Exword::Disconnect()
 {
     if (IsConnected()) {
         exword_register_transfer_callbacks(m_device, NULL, NULL, NULL);
+        exword_register_disconnect_callback(m_device, NULL, NULL);
         exword_close(m_device);
         m_device = NULL;
         m_connected = false;
+        m_timer.Stop();
     }
 }
 
@@ -425,11 +460,15 @@ bool Exword::IsSdInserted()
     return found;
 }
 
-void Exword::SetFileCallback(ExwordCallback* cb)
+void Exword::SetEventTarget(wxWindow *target)
 {
-    if (m_callback != NULL)
-        delete m_callback;
-    this->m_callback = cb;
+    if (m_eventTarget) {
+        m_eventTarget->RemoveEventHandler(this);
+    }
+    if (target) {
+        target->PushEventHandler(this);
+    }
+    m_eventTarget = target;
 }
 
 bool Exword::SetStorage(ExwordStorage storage)
@@ -504,5 +543,12 @@ wxString Exword::GetUserDataDir()
         dataDir = wxStandardPaths::Get().GetUserDataDir();
     }
     return dataDir;
+}
+
+void Exword::OnTimer(wxTimerEvent& event)
+{
+    if(m_device)
+        exword_handle_disconnect_event(m_device);
+    event.Skip();
 }
 
