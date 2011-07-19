@@ -18,33 +18,39 @@
  *
  */
 
-#ifndef TRANSFERTHREAD_H
-#define TRANSFERTHREAD_H
 
-#include <wx/frame.h>
-#include <wx/thread.h>
+#include "ThreadBase.h"
 
-enum {
-        myID_START = 1,
-        myID_FINISH,
-};
+DEFINE_LOCAL_EVENT_TYPE(myEVT_THREAD)
 
-BEGIN_DECLARE_EVENT_TYPES()
-        DECLARE_LOCAL_EVENT_TYPE(myEVT_THREAD, 1)
-END_DECLARE_EVENT_TYPES()
-
-class TransferThread : public wxThread
+ThreadBase::ThreadBase(wxEvtHandler *evthandler)
+        : wxThread(wxTHREAD_DETACHED)
 {
-    public:
-        TransferThread(wxFrame *frame);
-        bool Start(void *);
-        virtual void *Entry();
-        virtual void OnExit();
-        virtual void *Action() = 0;
-        void FireEvent(wxString text, int id);
-    protected:
-        void *m_data;
-        wxFrame *m_frame;
-};
+    m_evthandler = evthandler;
+    m_data = NULL;
+}
 
-#endif
+bool ThreadBase::Start(void *data)
+{
+    m_data = data;
+    if (this->Create() != wxTHREAD_NO_ERROR)
+        return false;
+    return (this->Run() == wxTHREAD_NO_ERROR);
+}
+
+void ThreadBase::OnExit()
+{
+}
+
+void ThreadBase::FireEvent(wxString text, int id)
+{
+    wxCommandEvent event(myEVT_THREAD, id);
+    event.SetString(text);
+    wxPostEvent(m_evthandler, event);
+}
+
+void *ThreadBase::Entry()
+{
+    return Action();
+}
+

@@ -22,13 +22,13 @@
 #define UPLOADTHREAD_H
 
 #include "ExwordDevice.h"
-#include "TransferThread.h"
+#include "ThreadBase.h"
 
 
-class UploadThread : public TransferThread
+class UploadThread : public ThreadBase
 {
     public:
-        UploadThread(wxFrame *frame, Exword *exword) : TransferThread(frame) {
+        UploadThread(wxFrame *frame, Exword *exword) : ThreadBase(frame) {
             m_exword = exword;
         };
         ~UploadThread();

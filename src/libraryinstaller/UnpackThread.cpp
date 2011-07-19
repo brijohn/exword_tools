@@ -29,25 +29,11 @@
 
 static char mainKey[] = "1357913564208642";
 
-DEFINE_LOCAL_EVENT_TYPE(myEVT_INSTALL)
-
 UnpackThread::UnpackThread(InstallWizard *wizard)
-        : wxThread()
+        : ThreadBase(wizard)
 {
-    m_wizard = wizard;
+	m_wizard = wizard;
 }
-
-void UnpackThread::OnExit()
-{
-}
-
-void UnpackThread::FireEvent(wxString text, int id)
-{
-    wxCommandEvent event(myEVT_INSTALL, id);
-    event.SetString(text);
-    wxPostEvent(m_wizard, event);
-}
-
 
 int UnpackThread::DecryptKey(const char* keyFile, char* key)
 {
@@ -116,7 +102,7 @@ void UnpackThread::DecryptFiles(wxString keyFile, wxString installBase)
     }
 }
 
-void *UnpackThread::Entry()
+void *UnpackThread::Action()
 {
     wxString text;
     wxString keyFile;
@@ -166,7 +152,7 @@ void *UnpackThread::Entry()
         }
         DecryptFiles(keyFile, installBase);
     }
-    FireEvent(wxT(""), myID_FINISHED);
+    FireEvent(wxT(""), myID_FINISH);
     return NULL;
 }
 

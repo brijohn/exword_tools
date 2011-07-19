@@ -27,9 +27,9 @@
 #include "UnpackThread.h"
 
 BEGIN_EVENT_TABLE( InstallWizard, InstallWizard_Base )
-    EVT_COMMAND(myID_WRITETEXT, myEVT_INSTALL, InstallWizard::OnThreadWriteText)
-    EVT_COMMAND(myID_DECRYPT, myEVT_INSTALL, InstallWizard::OnThreadDecrypt)
-    EVT_COMMAND(myID_FINISHED, myEVT_INSTALL, InstallWizard::OnThreadFinished)
+    EVT_COMMAND(myID_WRITETEXT, myEVT_THREAD, InstallWizard::OnThreadWriteText)
+    EVT_COMMAND(myID_DECRYPT, myEVT_THREAD, InstallWizard::OnThreadDecrypt)
+    EVT_COMMAND(myID_FINISH, myEVT_THREAD, InstallWizard::OnThreadFinished)
     EVT_WIZARD_PAGE_CHANGING(wxID_ANY, InstallWizard::OnChangePage)
     EVT_WIZARD_PAGE_SHOWN(wxID_ANY, InstallWizard::OnDisplay)
 END_EVENT_TABLE()

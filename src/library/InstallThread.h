@@ -22,13 +22,13 @@
 #define INSTALLTHREAD_H
 
 #include "ExwordDevice.h"
-#include "TransferThread.h"
+#include "ThreadBase.h"
 
 
-class InstallThread : public TransferThread
+class InstallThread : public ThreadBase
 {
     public:
-        InstallThread(wxFrame *frame, Exword *exword) : TransferThread(frame) {
+        InstallThread(wxFrame *frame, Exword *exword) : ThreadBase(frame) {
             m_exword = exword;
         };
         virtual void *Action();
@@ -36,10 +36,10 @@ class InstallThread : public TransferThread
         Exword *m_exword;
 };
 
-class RemoveThread : public TransferThread
+class RemoveThread : public ThreadBase
 {
     public:
-        RemoveThread(wxFrame *frame, Exword *exword) : TransferThread(frame) {
+        RemoveThread(wxFrame *frame, Exword *exword) : ThreadBase(frame) {
             m_exword = exword;
         };
         virtual void *Action();

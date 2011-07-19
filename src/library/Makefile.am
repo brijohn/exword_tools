@@ -4,7 +4,7 @@ bin_PROGRAMS = ExwordLibrary
 
 ExwordLibrary_SOURCES = Library.cpp LibraryFrame.cpp \
                         ../common/ExwordDevice.cpp ../common/Dictionary.cpp \
-                        ../common/TransferThread.cpp InstallThread.cpp \
+                        ../common/ThreadBase.cpp InstallThread.cpp \
                         ../common/Model.cpp Users.cpp DictionaryListCtrl.cpp \
                         ../common/ProgressDialog.cpp Resources.cpp
 

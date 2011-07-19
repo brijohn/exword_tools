@@ -23,28 +23,22 @@
 
 #include <wx/thread.h>
 #include "InstallWizard.h"
+#include "ThreadBase.h"
 
 enum {
-        myID_WRITETEXT = 1,
+        myID_WRITETEXT = myID_FINISH + 1,
         myID_DECRYPT,
-        myID_FINISHED
 };
 
-BEGIN_DECLARE_EVENT_TYPES()
-        DECLARE_LOCAL_EVENT_TYPE(myEVT_INSTALL, 1)
-END_DECLARE_EVENT_TYPES()
-
-class UnpackThread : public wxThread
+class UnpackThread : public ThreadBase
 {
 public:
     UnpackThread(InstallWizard *wizard);
-    virtual void *Entry();
-    virtual void OnExit();
+    virtual void *Action();
     int DecryptKey(const char* keyFile, char* key);
     int DecryptFile(char *key, unsigned long key_length, char *data, unsigned long length);
     void DecryptFiles(wxString keyFile, wxString installBase);
-    void FireEvent(wxString text, int id);
-public:
+private:
     InstallWizard *m_wizard;
 };
 
