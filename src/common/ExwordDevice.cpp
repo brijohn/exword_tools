@@ -145,7 +145,7 @@ bool Exword::Connect(ExwordMode mode, ExwordRegion region)
         options |= EXWORD_REGION_RU;
         break;
     }
-    m_device = exword_open2(options);
+    m_device = exword_open(options);
     if (m_device) {
         exword_setpath(m_device, (uint8_t*)"\\_INTERNAL_00", 0);
         exword_register_transfer_callbacks(m_device, get_file_cb, put_file_cb, this);
