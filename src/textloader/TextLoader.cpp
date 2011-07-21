@@ -35,7 +35,7 @@ bool TextLoader::OnInit()
     wxXmlResource::Get()->InitAllHandlers();
     InitXmlResource();
     TextLoaderFrame *frame = new TextLoaderFrame();
-    frame->SetIcon(wxIcon(ExwordTextLoader));
+    frame->SetIcon(wxICON(ExwordTextLoader));
     frame->Show(true);
     SetTopWindow(frame);
     return true;

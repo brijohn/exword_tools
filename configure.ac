@@ -9,7 +9,7 @@ AC_CONFIG_HEADERS([config.h])
 
 # Checks for programs.
 AC_PROG_CXX
-AC_PROG_CC
+AM_PROG_CC_C_O
 AC_PROG_RANLIB
 
 # Checks for header files.
@@ -48,6 +48,7 @@ CXXFLAGS="$CXXFLAGS $WX_CXXFLAGS_ONLY"
 CFLAGS="$CFLAGS $WX_CFLAGS_ONLY"
 LIBS="$LIBS $WX_LIBS"
 
+AM_CONDITIONAL(HAVE_WINDRES, which windres > /dev/null)
 
 # Big-endian stuff
 AC_SUBST(WORDS_BIGENDIAN)

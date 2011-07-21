@@ -14,6 +14,14 @@ ExwordLibraryInstaller_CXXFLAGS = -I../common    \
                                   $(AM_CFLAGS)   \
                                   @CXXFLAGS@
 
+if HAVE_WINDRES
+BUILT_SOURCES += ExwordTools.$(OBJEXT)
+ExwordLibraryInstaller_LDADD   += ExwordTools.$(OBJEXT)
+
+ExwordTools.$(OBJEXT):
+	$(WX_RESCOMP) ../resources/windows/ExwordTools.rc -o $@
+endif
+
 Resources.h:
 	$(WXRC) -c -e ../resources/xrc/LibraryInstaller.xrc -o Resources.cpp
 

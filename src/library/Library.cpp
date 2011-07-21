@@ -33,7 +33,7 @@ bool Library::OnInit()
     InitXmlResource();
     SetAppName(wxT("exword"));
     LibraryFrame *frame = new LibraryFrame();
-    frame->SetIcon(wxIcon(ExwordLibrary));
+    frame->SetIcon(wxICON(ExwordLibrary));
     frame->Show(true);
     SetTopWindow(frame);
     return true;

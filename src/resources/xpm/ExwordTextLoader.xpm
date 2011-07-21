@@ -1,5 +1,5 @@
 /* XPM */
-static const char *ExwordTextLoader[] = {
+static const char *ExwordTextLoader_xpm[] = {
 /* columns rows colors chars-per-pixel */
 "48 48 192 2 ",
 "   c #020101",

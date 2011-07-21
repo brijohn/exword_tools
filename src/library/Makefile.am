@@ -17,6 +17,14 @@ ExwordLibrary_CXXFLAGS = -I../common      \
 ExwordLibrary_LDFLAGS = $(AM_LDFLAGS)
 ExwordLibrary_LDADD =   @LIBS@ $(EXWORD_LIBS)
 
+if HAVE_WINDRES
+BUILT_SOURCES += ExwordTools.$(OBJEXT)
+ExwordLibrary_LDADD   += ExwordTools.$(OBJEXT)
+
+ExwordTools.$(OBJEXT):
+	$(WX_RESCOMP) -DLIBRARY_RC ../resources/windows/ExwordTools.rc -o $@
+endif
+
 Resources.h:
 	$(WXRC) -c -e ../resources/xrc/Library.xrc -o Resources.cpp
 

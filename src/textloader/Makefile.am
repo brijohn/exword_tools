@@ -8,6 +8,7 @@ ExwordTextLoader_SOURCES = TextLoader.cpp TextLoaderFrame.cpp \
                            ../common/ProgressDialog.cpp ../common/Model.cpp \
                            Resources.cpp
 
+
 ExwordTextLoader_CXXFLAGS = -I../common      \
                             $(WARN_CFLAGS)   \
                             $(AM_CFLAGS)     \
@@ -16,6 +17,14 @@ ExwordTextLoader_CXXFLAGS = -I../common      \
 
 ExwordTextLoader_LDFLAGS = $(AM_LDFLAGS)
 ExwordTextLoader_LDADD =   @LIBS@ $(EXWORD_LIBS)
+
+if HAVE_WINDRES
+BUILT_SOURCES += ExwordTools.$(OBJEXT)
+ExwordTextLoader_LDADD   += ExwordTools.$(OBJEXT)
+
+ExwordTools.$(OBJEXT):
+	$(WX_RESCOMP) -DTEXTLOADER_RC ../resources/windows/ExwordTools.rc -o $@
+endif
 
 Resources.h:
 	$(WXRC) -c -e ../resources/xrc/TextLoader.xrc -o Resources.cpp
