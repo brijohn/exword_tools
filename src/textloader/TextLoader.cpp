@@ -22,6 +22,8 @@
 #include "TextLoader.h"
 #include "TextLoaderFrame.h"
 
+#include "ExwordTextLoader.xpm"
+
 IMPLEMENT_APP(TextLoader);
 
 
@@ -33,6 +35,7 @@ bool TextLoader::OnInit()
     wxXmlResource::Get()->InitAllHandlers();
     InitXmlResource();
     TextLoaderFrame *frame = new TextLoaderFrame();
+    frame->SetIcon(wxIcon(ExwordTextLoader));
     frame->Show(true);
     SetTopWindow(frame);
     return true;

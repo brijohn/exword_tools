@@ -22,6 +22,8 @@
 #include "Library.h"
 #include "LibraryFrame.h"
 
+#include "ExwordLibrary.xpm"
+
 IMPLEMENT_APP(Library);
 
 
@@ -31,6 +33,7 @@ bool Library::OnInit()
     InitXmlResource();
     SetAppName(wxT("exword"));
     LibraryFrame *frame = new LibraryFrame();
+    frame->SetIcon(wxIcon(ExwordLibrary));
     frame->Show(true);
     SetTopWindow(frame);
     return true;
