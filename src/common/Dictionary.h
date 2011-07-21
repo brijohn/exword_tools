@@ -27,7 +27,7 @@ class Exword;
 
 class DictionaryInfo {
     public:
-        DictionaryInfo(char *id, char *name, char *key);
+        DictionaryInfo(const char *id, const char *name, const char *key);
         wxString GetId() { return m_id; };
         wxString GetName() { return m_name; };
         wxMemoryBuffer GetKey() { return m_key; };

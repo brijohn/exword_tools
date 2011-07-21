@@ -35,7 +35,7 @@ bool DictionaryInfo::operator==(const DictionaryInfo& other)
     return (this->m_id == other.m_id && this->m_key == other.m_key && this->m_name == other.m_name);
 }
 
-DictionaryInfo::DictionaryInfo(char *id, char *name, char *key)
+DictionaryInfo::DictionaryInfo(const char *id, const char *name, const char *key)
 {
     m_id = wxString::FromAscii(id);
     m_name = wxString(name, wxCSConv(wxT("SJIS")));
