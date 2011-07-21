@@ -15,7 +15,7 @@ ExwordLibraryInstaller_CXXFLAGS = -I../common    \
                                   @CXXFLAGS@
 
 Resources.h:
-	$(WXRC) -c -e LibraryInstaller.xrc -o Resources.cpp
+	$(WXRC) -c -e ../resources/xrc/LibraryInstaller.xrc -o Resources.cpp
 
 clean-local:
 	-rm -rf Resources.cpp Resources.h

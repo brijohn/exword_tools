@@ -8,7 +8,7 @@ ExwordLibrary_SOURCES = Library.cpp LibraryFrame.cpp \
                         ../common/Model.cpp Users.cpp DictionaryListCtrl.cpp \
                         ../common/ProgressDialog.cpp Resources.cpp
 
-ExwordLibrary_CXXFLAGS = -I../common \
+ExwordLibrary_CXXFLAGS = -I../common      \
                          $(WARN_CFLAGS)   \
                          $(AM_CFLAGS)     \
                          $(EXWORD_CFLAGS) \
@@ -18,7 +18,7 @@ ExwordLibrary_LDFLAGS = $(AM_LDFLAGS)
 ExwordLibrary_LDADD =   @LIBS@ $(EXWORD_LIBS)
 
 Resources.h:
-	$(WXRC) -c -e Library.xrc -o Resources.cpp
+	$(WXRC) -c -e ../resources/xrc/Library.xrc -o Resources.cpp
 
 clean-local:
 	-rm -rf Resources.cpp Resources.h

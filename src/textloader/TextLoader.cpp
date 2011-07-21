@@ -22,7 +22,7 @@
 #include "TextLoader.h"
 #include "TextLoaderFrame.h"
 
-#include "ExwordTextLoader.xpm"
+#include "../resources/xpm/ExwordTextLoader.xpm"
 
 IMPLEMENT_APP(TextLoader);
 

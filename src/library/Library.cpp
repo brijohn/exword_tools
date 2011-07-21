@@ -22,7 +22,7 @@
 #include "Library.h"
 #include "LibraryFrame.h"
 
-#include "ExwordLibrary.xpm"
+#include "../resources/xpm/ExwordLibrary.xpm"
 
 IMPLEMENT_APP(Library);
 
