@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.61])
-AC_INIT(exword_tools, 0.1, brijohn@gmail.com)
+AC_INIT(exword_tools, 1.0, brijohn@gmail.com)
 AM_INIT_AUTOMAKE([-Wall -Werror])
 AC_CONFIG_SRCDIR([src/common/ExwordDevice.cpp])
 AC_CONFIG_HEADERS([config.h])
@@ -65,7 +65,7 @@ else
 fi
 
 # Checks for typedefs, structures, and compiler characteristics.
-LIBEXWORD_REQUIRED=0.1
+LIBEXWORD_REQUIRED=2.0
 PKG_CHECK_MODULES([EXWORD],[libexword >= $LIBEXWORD_REQUIRED])
 
 AC_SUBST([EXWORD_CFLAGS])
