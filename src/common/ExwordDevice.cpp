@@ -86,24 +86,29 @@ void get_file_cb(char * filename, uint32_t transferred, uint32_t length, void *d
 Exword::Exword() : m_timer(this, 99)
 {
     m_connected = false;
-    m_device = NULL;
+    m_device = exword_init();
     m_eventTarget = NULL;
     m_mode = LIBRARY;
     m_region = JAPANESE;
     m_storage = INTERNAL;
+    exword_register_transfer_callbacks(m_device, get_file_cb, put_file_cb, this);
+    exword_register_disconnect_callback(m_device, disconnect_event_cb, this);
 }
 
 Exword::Exword(ExwordMode mode, ExwordRegion region)
 {
     m_connected = false;
-    m_device = NULL;
+    m_device = exword_init();
     m_eventTarget = NULL;
+    exword_register_transfer_callbacks(m_device, get_file_cb, put_file_cb, this);
+    exword_register_disconnect_callback(m_device, disconnect_event_cb, this);
     Connect(mode, region);
 }
 
 Exword::~Exword()
 {
     Disconnect();
+    exword_deinit(m_device);
     if (m_eventTarget != NULL)
         m_eventTarget->RemoveEventHandler(this);
 }
@@ -145,11 +150,8 @@ bool Exword::Connect(ExwordMode mode, ExwordRegion region)
         options |= EXWORD_REGION_RU;
         break;
     }
-    m_device = exword_open(options);
-    if (m_device) {
+    if (exword_connect(m_device, options) == EXWORD_SUCCESS) {
         exword_setpath(m_device, (uint8_t*)"\\_INTERNAL_00", 0);
-        exword_register_transfer_callbacks(m_device, get_file_cb, put_file_cb, this);
-        exword_register_disconnect_callback(m_device, disconnect_event_cb, this);
         m_connected = true;
         m_mode = mode;
         m_region = region;
@@ -162,10 +164,7 @@ bool Exword::Connect(ExwordMode mode, ExwordRegion region)
 void Exword::Disconnect()
 {
     if (IsConnected()) {
-        exword_register_transfer_callbacks(m_device, NULL, NULL, NULL);
-        exword_register_disconnect_callback(m_device, NULL, NULL);
-        exword_close(m_device);
-        m_device = NULL;
+        exword_disconnect(m_device);
         m_connected = false;
         m_timer.Stop();
     }
@@ -548,7 +547,7 @@ wxString Exword::GetUserDataDir()
 void Exword::OnTimer(wxTimerEvent& event)
 {
     if(m_device)
-        exword_handle_disconnect_event(m_device);
+        exword_poll_disconnect(m_device);
     event.Skip();
 }
 
