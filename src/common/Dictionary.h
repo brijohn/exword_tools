@@ -22,8 +22,7 @@
 #define DICTIONARY_H
 
 #include <wx/wx.h>
-
-class Exword;
+#include "ExwordDevice.h"
 
 class DictionaryInfo {
     public:
@@ -55,7 +54,7 @@ class Dictionary {
 
 class LocalDictionary : public Dictionary {
     public:
-        LocalDictionary(wxString id);
+        LocalDictionary(wxString id, ExwordRegion region);
         virtual wxString GetName();
         virtual unsigned long long GetSize();
         virtual bool Exists();

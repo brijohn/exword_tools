@@ -119,9 +119,9 @@ void *UnpackThread::Action()
             int ret = sscanf(group->name, "\x8e\xab\x8f\x91User1 %5s %2s", dict_name, type);
             if (ret >= 1 && strcmp(dict_name, names[i].utf8_str().data()) == 0) {
                 if (ret == 2 && strcmp(type, "DB") == 0) {
-                    installBase.Printf(wxT("%s%c%s%c"), LibraryInstaller::GetUserDataDir().c_str(),
-                                       wxFileName::GetPathSeparator(), names[i].c_str(),
-                                       wxFileName::GetPathSeparator());
+                    installBase.Printf(wxT("%s%cja%c%s%c"), LibraryInstaller::GetUserDataDir().c_str(),
+                                       wxFileName::GetPathSeparator(), wxFileName::GetPathSeparator(),
+                                       names[i].c_str(), wxFileName::GetPathSeparator());
                     if (wxFileName::Mkdir(installBase, 0777, wxPATH_MKDIR_FULL)) {
                         text.Printf(wxT("Installing %s\n"), names[i].c_str());
                         FireEvent(text, myID_WRITETEXT);

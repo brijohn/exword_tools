@@ -254,17 +254,26 @@ DictionaryInfo Exword::GetDictionaryInfo(wxString id)
 
 DictionaryArray Exword::GetLocalDictionaries()
 {
+    static const wxChar *country[] = { NULL, wxT("ja"), wxT("cn"),
+                                       wxT("kr"), wxT("de"), wxT("es"),
+                                       wxT("fr"), wxT("ru")};
     DictionaryArray list;
-    wxDir dir(Exword::GetUserDataDir());
-    if (dir.IsOpened()) {
-        wxString filename;
-        bool cont = dir.GetFirst(&filename, wxEmptyString, wxDIR_DIRS);
-        while (cont) {
-            Dictionary *local = new LocalDictionary(filename);
-            if (local->Exists()) {
-                list.Add(local);
+    wxString path;
+    if (IsConnected()) {
+        path.Printf(wxT("%s%c%s%c"), Exword::GetUserDataDir().c_str(),
+                    wxFileName::GetPathSeparator(), country[m_region],
+                    wxFileName::GetPathSeparator());
+        wxDir dir(path);
+        if (dir.IsOpened()) {
+            wxString filename;
+            bool cont = dir.GetFirst(&filename, wxEmptyString, wxDIR_DIRS);
+            while (cont) {
+                Dictionary *local = new LocalDictionary(filename, m_region);
+                if (local->Exists()) {
+                    list.Add(local);
+                }
+                cont = dir.GetNext(&filename);
             }
-            cont = dir.GetNext(&filename);
         }
     }
     return list;
@@ -276,7 +285,7 @@ DictionaryArray Exword::GetRemoteDictionaries()
     wxMemoryBuffer admini(180);
     if (IsConnected()) {
         ReadAdmini(admini);
-       char *data = (char *)admini.GetData();
+        char *data = (char *)admini.GetData();
         if (admini.GetDataLen() > 0) {
             for (unsigned int i = 0; i < admini.GetDataLen(); i += 180) {
                 list.Add(new RemoteDictionary(wxString::FromAscii(data + i), this));

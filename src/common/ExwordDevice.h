@@ -25,7 +25,11 @@
 #include <wx/filename.h>
 
 #include "Model.h"
-#include "Dictionary.h"
+
+class DictionaryInfo;
+class DictionaryArray;
+class LocalDictionary;
+class RemoteDictionary;
 
 enum ExwordMode {
     LIBRARY = 1,

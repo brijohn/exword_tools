@@ -52,9 +52,13 @@ wxString Dictionary::GetId()
     return m_id;
 }
 
-LocalDictionary::LocalDictionary(wxString id) : Dictionary(id)
+LocalDictionary::LocalDictionary(wxString id, ExwordRegion region) : Dictionary(id)
 {
-    m_path.Printf(wxT("%s%c%s%c"), Exword::GetUserDataDir().c_str(),
+    static const wxChar *country[] = { NULL, wxT("ja"), wxT("cn"),
+                                       wxT("kr"), wxT("de"), wxT("es"),
+                                       wxT("fr"), wxT("ru")};
+    m_path.Printf(wxT("%s%c%s%c%s%c"), Exword::GetUserDataDir().c_str(),
+                  wxFileName::GetPathSeparator(), country[region],
                   wxFileName::GetPathSeparator(), id.c_str(),
                   wxFileName::GetPathSeparator());
 }
