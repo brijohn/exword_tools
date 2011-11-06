@@ -22,7 +22,7 @@
 
 #include "ProgressDialog.h"
 
-ProgressDialog::ProgressDialog(wxWindow *parent, wxString message) : wxDialog(parent, wxID_ANY, _("Transfer progress"))
+ProgressDialog::ProgressDialog(wxWindow *parent, wxString message) : wxDialog(parent, wxID_ANY, wxString(_("Transfer progress")))
 {
     wxSize sizeDlg;
     wxSize sizeLabel;
