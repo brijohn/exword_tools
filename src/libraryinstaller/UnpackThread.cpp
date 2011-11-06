@@ -96,7 +96,7 @@ void UnpackThread::DecryptFiles(wxString keyFile, wxString installBase)
         }
     } else {
         wxString cmd;
-        cmd.Printf(wxT("wine %s %s %s"), m_wizard->GetDecrypterPath().c_str(), keyFile.c_str(), installBase.c_str());
+        cmd.Printf(wxT("wine \"%s\" \"%s\" \"%s\""), m_wizard->GetDecrypterPath().c_str(), keyFile.c_str(), installBase.c_str());
         FireEvent(cmd, myID_DECRYPT);
         wxGetApp().m_execDone.Wait();
     }

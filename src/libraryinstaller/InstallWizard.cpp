@@ -97,7 +97,7 @@ int InstallWizard::CheckDecryptFunction()
         return DECRYPT_OK;
     } else {
         wxString wine;
-        wine.Printf(wxT("wine %s"), GetDecrypterPath().c_str());
+        wine.Printf(wxT("wine \"%s\""), GetDecrypterPath().c_str());
         long ret = wxExecute(wine, wxEXEC_SYNC);
         return ret;
     }
