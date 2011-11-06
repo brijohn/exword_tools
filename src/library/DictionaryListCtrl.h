@@ -28,6 +28,8 @@
 
 class DictionaryListCtrl : public wxListCtrl {
     public:
+        enum ListType { wxREMOTE, wxLOCAL };
+    public:
         DictionaryListCtrl() {};
         DictionaryListCtrl(wxWindow *parent,
                            const wxWindowID id,
@@ -38,12 +40,14 @@ class DictionaryListCtrl : public wxListCtrl {
 
         void SetDictionaries(DictionaryArray items);
         void ClearDictionaries();
+        void SetType(ListType t);
         void SetColumnWidths(int lastWidth);
         Dictionary* GetSelectedDictionary();
         bool DictionaryExists(wxString id);
         virtual wxString OnGetItemText(long item, long column) const;
 
     private:
+        ListType m_type;
         wxString DisplaySize(long item) const;
         DictionaryArray m_items;
         DECLARE_DYNAMIC_CLASS(DictionaryListCtrl);

@@ -44,15 +44,10 @@ LibraryFrame::LibraryFrame() : m_pulser(this, 1)
     for (it = m_users.begin(); it != m_users.end(); ++it) {
         m_user->Append(it->first);
     }
-    m_user->SetSelection(0);
+    m_user->SetSelection(m_user->GetCount() >= 1 ? 0 : wxNOT_FOUND);
     m_status->SetFieldsCount(2, fieldWidths);
-    local->InsertColumn(0, _("Filename"));
-    local->InsertColumn(1, _("Size"));
-    local->SetColumnWidths(60);
-    local->SetFont(wxFont(8, 76, 90, 90, false, wxEmptyString));
-    remote->InsertColumn(0, _("Filename"));
-    remote->SetColumnWidths(0);
-    remote->SetFont(wxFont(8, 76, 90, 90, false, wxEmptyString));
+    local->SetType(DictionaryListCtrl::wxLOCAL);
+    remote->SetType(DictionaryListCtrl::wxREMOTE);
     m_exword.SetEventTarget(this);
     m_progress = new ProgressDialog(this, wxT(""));
 }

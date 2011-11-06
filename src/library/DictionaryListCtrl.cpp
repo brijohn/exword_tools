@@ -35,8 +35,29 @@ void DictionaryListCtrl::SetColumnWidths(int lastWidth)
 {
     int w;
     GetClientSize(&w, NULL);
-    SetColumnWidth(1, lastWidth);
-    SetColumnWidth(0, w - GetColumnWidth(1));
+    if (m_type == wxLOCAL) {
+        SetColumnWidth(1, lastWidth);
+        SetColumnWidth(0, w - GetColumnWidth(1));
+    } else {
+        SetColumnWidth(0, w);
+    }
+}
+
+void DictionaryListCtrl::SetType(ListType t)
+{
+    m_type = t;
+    for (int i = GetColumnCount() - 1; i >= 0; --i) {
+        DeleteColumn(i);
+    }
+    InsertColumn(0, _("Filename"));
+    if (m_type == wxLOCAL) {
+        InsertColumn(1, _("Size"));
+        SetColumnWidths(60);
+    } else {
+        SetColumnWidths(0);
+    }
+    SetFont(wxFont(8, 76, 90, 90, false, wxEmptyString));
+    RefreshItems(0, GetItemCount());
 }
 
 void DictionaryListCtrl::ClearDictionaries()
