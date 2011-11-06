@@ -58,20 +58,18 @@ Users::~Users()
     int str_len;
     Users::iterator it;
     userFile.Printf(wxT("%s%cusers.dat"), Exword::GetUserDataDir().c_str(), wxFileName::GetPathSeparator());
-    if (wxFile::Access(userFile.c_str(), wxFile::write)) {
-        if (file.Create(userFile.c_str(), wxFile::write)) {
-            for(it = this->begin(); it != this->end(); ++it) {
-                wxString key = it->first;
-                wxMemoryBuffer value = it->second;
-                str_len =  strlen(key.utf8_str().data());
-                data = new char[22 + str_len];
-                memset(data, 0, 22 + str_len);
-                data[0] = str_len + 1;
-                memcpy(data + 1, key.utf8_str().data(), str_len);
-                memcpy(data + 2 + str_len, value.GetData(), 20);
-                file.Write(data, 22 + str_len);
-                delete [] data;
-            }
+    if (file.Create(userFile.c_str(), true)) {
+        for(it = this->begin(); it != this->end(); ++it) {
+            wxString key = it->first;
+            wxMemoryBuffer value = it->second;
+            str_len =  strlen(key.utf8_str().data());
+            data = new char[22 + str_len];
+            memset(data, 0, 22 + str_len);
+            data[0] = str_len + 1;
+            memcpy(data + 1, key.utf8_str().data(), str_len);
+            memcpy(data + 2 + str_len, value.GetData(), 20);
+            file.Write(data, 22 + str_len);
+            delete [] data;
         }
     }
 }
