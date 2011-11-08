@@ -156,7 +156,12 @@ bool RemoteDictionary::Exists()
 
 wxArrayString RemoteDictionary::GetFiles()
 {
-    return m_device->List(m_path);
+    wxArrayString fileList;
+    DirEnts files = m_device->List(m_path);
+    for (int i = 0; i < files.GetCount(); ++i) {
+        fileList.Add(files[i].GetFilename());
+    }
+    return fileList;
 }
 
 unsigned long RemoteDictionary::GetMinSupportedSeries()

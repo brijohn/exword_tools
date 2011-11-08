@@ -83,6 +83,19 @@ void get_file_cb(char * filename, uint32_t transferred, uint32_t length, void *d
     }
 }
 
+DirEntry::DirEntry(exword_dirent_t *entry)
+{
+    wxCSConv conv(wxFONTENCODING_UTF16BE);
+    m_flags = entry->flags;
+    if (ENTRY_IS_UNICODE(entry))
+        m_filename = wxString(conv.cMB2WC((const char*)entry->name));
+    else
+        m_filename = wxString::FromAscii((const char*)entry->name);
+}
+
+#include <wx/arrimpl.cpp>
+WX_DEFINE_OBJARRAY(DirEnts);
+
 Exword::Exword() : m_timer(this, 99)
 {
     m_connected = false;
@@ -420,24 +433,19 @@ Capacity Exword::GetCapacity()
     return Capacity(cap.total, cap.free);
 }
 
-wxArrayString Exword::List(wxString path, wxString pattern)
+DirEnts Exword::List(wxString path, wxString pattern)
 {
-    wxCSConv conv(wxFONTENCODING_UTF16BE);
     exword_dirent_t *entries;
     uint16_t count;
-    wxArrayString list;
-    wxString filename;
+    DirEnts list;
     wxString fullpath = GetStoragePath() + path;
     if (IsConnected()) {
         if (exword_setpath(m_device, (uint8_t*)fullpath.utf8_str().data(), 0) == EXWORD_SUCCESS) {
             if (exword_list(m_device, &entries, &count) == EXWORD_SUCCESS) {
                 for (int i = 0; i < count; i++) {
-                    if (ENTRY_IS_UNICODE(&entries[i]))
-                        filename = wxString(conv.cMB2WC((const char*)entries[i].name));
-                    else
-                        filename = wxString::FromAscii((const char*)entries[i].name);
-                    if (wxMatchWild(pattern.Lower(), filename.Lower(), true))
-                        list.Add(filename);
+                    DirEntry entry(&entries[i]);
+                    if (wxMatchWild(pattern.Lower(), entry.GetFilename().Lower(), true))
+                        list.Add(entry);
                 }
                 exword_free_list(entries);
             }

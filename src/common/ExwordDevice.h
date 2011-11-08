@@ -63,6 +63,21 @@ class Capacity {
         unsigned long m_free;
 };
 
+class DirEntry {
+    public:
+        DirEntry() { m_flags = 0; };
+        DirEntry(exword_dirent_t *entry);
+        wxString GetFilename() { return m_filename; };
+        unsigned long GetFlags() { return m_flags; };
+        bool IsDirectory() { return ((m_flags & 0x1) != 0); };
+        bool IsUnicode() { return ((m_flags & 0x2) != 0); };
+    private:
+        wxString m_filename;
+        unsigned long m_flags;
+};
+
+WX_DECLARE_OBJARRAY(DirEntry, DirEnts);
+
 BEGIN_DECLARE_EVENT_TYPES()
     DECLARE_LOCAL_EVENT_TYPE(myEVT_DISCONNECT, 1)
     DECLARE_LOCAL_EVENT_TYPE(myEVT_FILE_TRANSFER, 2)
@@ -125,7 +140,7 @@ class Exword : public wxEvtHandler {
         DictionaryArray GetLocalDictionaries();
         DictionaryArray GetRemoteDictionaries();
         bool IsSdInserted();
-        wxArrayString List(wxString path, wxString pattern = wxT("*"));
+        DirEnts List(wxString path, wxString pattern = wxT("*"));
         Capacity GetCapacity();
         bool UploadFile(wxFileName filename);
         bool DeleteFile(wxString filename);

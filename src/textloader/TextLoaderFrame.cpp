@@ -105,10 +105,10 @@ void TextLoaderFrame::UpdateStatusbar()
 
 void TextLoaderFrame::UpdateFilelist()
 {
-    wxArrayString files = m_exword.List(wxT(""), wxT("*.TXT"));
+    DirEnts files = m_exword.List(wxT(""), wxT("*.TXT"));
     m_filelist->DeleteAllItems();
     for (unsigned int i = 0; i < files.GetCount(); ++i) {
-        m_filelist->InsertItem(i, files[i]);
+        m_filelist->InsertItem(i, files[i].GetFilename());
     }
 }
 
