@@ -21,6 +21,7 @@
 #include <wx/wx.h>
 #include <wx/platinfo.h>
 #include <wx/filename.h>
+#include <wx/stdpaths.h>
 
 #include "LibraryInstaller.h"
 #include "InstallWizard.h"
@@ -125,7 +126,7 @@ wxString InstallWizard::GetDecrypterPath()
     if (id & wxOS_WINDOWS) {
         path = wxT("MDSR2.dll");
     } else {
-        path = LibraryInstaller::GetUserDataDir() + wxFileName::GetPathSeparator() + wxT("exword_decrypt.exe");
+        path = wxStandardPaths::Get().GetDataDir() + wxFileName::GetPathSeparator() + wxT("exword_decrypt.exe");
     }
     return path;
 }
