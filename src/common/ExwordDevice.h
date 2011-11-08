@@ -143,7 +143,7 @@ class Exword : public wxEvtHandler {
         DirEnts List(wxString path, wxString pattern = wxT("*"));
         Capacity GetCapacity();
         bool UploadFile(wxFileName filename);
-        bool DeleteFile(wxString filename);
+        bool DeleteFile(wxString filename, unsigned long flags);
         bool InstallDictionary(LocalDictionary *dict);
         bool RemoveDictionary(RemoteDictionary *dict);
         bool SetStorage(ExwordStorage storage);

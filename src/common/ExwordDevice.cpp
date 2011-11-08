@@ -325,16 +325,14 @@ bool Exword::UploadFile(wxFileName filename)
     return success;
 }
 
-bool Exword::DeleteFile(wxString filename)
+bool Exword::DeleteFile(wxString filename, unsigned long flags)
 {
     int rsp;
-    Model model;
 
     if (!IsConnected())
          return false;
 
-    model = GetModel();
-    if (m_mode == TEXT && model.GetSeries() >= 5)
+    if (m_mode == TEXT && flags & 0x2)
         rsp = exword_remove_file(m_device, (char*)wxConvLocal.cWX2MB(filename).data(), 1);
     else
         rsp = exword_remove_file(m_device, (char*)wxConvLocal.cWX2MB(filename).data(), 0);

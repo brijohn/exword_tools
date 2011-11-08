@@ -109,6 +109,7 @@ void TextLoaderFrame::UpdateFilelist()
     m_filelist->DeleteAllItems();
     for (unsigned int i = 0; i < files.GetCount(); ++i) {
         m_filelist->InsertItem(i, files[i].GetFilename());
+        m_filelist->SetItemData(i, files[i].GetFlags());
     }
 }
 
@@ -149,10 +150,12 @@ void TextLoaderFrame::OnDelete(wxCommandEvent& event)
 {
     long item;
     wxString filename;
+    unsigned long flags;
     item = m_filelist->GetNextItem(-1, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
     if (item != -1) {
         filename = m_filelist->GetItemText(item);
-        m_exword.DeleteFile(filename);
+        flags = m_filelist->GetItemData(item);
+        m_exword.DeleteFile(filename, flags);
         m_filelist->DeleteItem(item);
         UpdateStatusbar();
     }
