@@ -25,16 +25,12 @@
 void *UploadThread::Action()
 {
     wxArrayString *files = (wxArrayString*)m_data;
-    if (files) {
+    if (files && files->GetCount() > 0) {
         FireEvent(wxT(""), myID_START);
         wxThread::Sleep(500);
         for (unsigned int i = 0; i < files->GetCount(); ++i) {
             wxFileName filename((*files)[i]);
-            if (filename.GetExt().IsSameAs(wxT("txt"), false)) {
-                if (filename.IsFileReadable()) {
-                    m_exword->UploadFile(filename);
-                }
-            }
+            m_exword->UploadFile(filename);
         }
         wxThread::Sleep(500);
         FireEvent(wxT(""), myID_FINISH);

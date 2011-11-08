@@ -28,7 +28,15 @@ class ExwordFileDropTarget : public wxFileDropTarget
     public:
         ExwordFileDropTarget(TextLoaderFrame *frame) { m_frame = frame; };
         virtual bool OnDropFiles(wxCoord x, wxCoord y, const wxArrayString& filenames) {
-            m_frame->UploadFiles(filenames);
+            wxArrayString list;
+            for (int i = 0; i < filenames.GetCount(); ++i) {
+                wxFileName filename(filenames[i]);
+                if (filename.GetExt().IsSameAs(wxT("txt"), false)) {
+                    if (filename.IsFileReadable())
+                        list.Add(filenames[i]);
+                }
+            }
+            m_frame->UploadFiles(list);
             return true;
         }
     private:
