@@ -61,6 +61,8 @@ class LocalDictionary : public Dictionary {
         virtual wxArrayString GetFiles();
         virtual unsigned long GetMinSupportedSeries();
     private:
+        bool IsValidSFN(wxString filename);
+    private:
         wxString m_path;
 };
 
