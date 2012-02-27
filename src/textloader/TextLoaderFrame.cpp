@@ -83,8 +83,12 @@ ExwordRegion TextLoaderFrame::GetRegionFromString(wxString name)
         return JAPANESE;
     else if(name == wxT("Chinese"))
         return CHINESE;
+    else if(name == wxT("Indian"))
+        return INDIAN;
     else if(name == wxT("Korean"))
         return KOREAN;
+    else if(name == wxT("Italian"))
+        return ITALIAN;
     else if(name == wxT("German"))
         return GERMAN;
     else if(name == wxT("Spanish"))

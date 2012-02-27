@@ -45,6 +45,8 @@ enum ExwordRegion {
     SPANISH,
     FRENCH,
     RUSSIAN,
+    INDIAN,
+    ITALIAN,
 };
 
 enum ExwordStorage {

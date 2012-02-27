@@ -68,8 +68,12 @@ ExwordRegion LibraryFrame::GetRegionFromString(wxString name)
         return JAPANESE;
     else if(name == _("Chinese"))
         return CHINESE;
+    else if(name == _("Indian"))
+        return INDIAN;
     else if(name == _("Korean"))
         return KOREAN;
+    else if(name == _("Italian"))
+        return ITALIAN;
     else if(name == _("German"))
         return GERMAN;
     else if(name == _("Spanish"))

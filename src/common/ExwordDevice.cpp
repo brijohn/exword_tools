@@ -39,7 +39,9 @@ static char key1[17] =
 static const char *admini_list[] = {
 	"admini.inf",
 	"adminikr.inf",
+	"adminiit.inf",
 	"adminicn.inf",
+	"adminiin.inf",
 	"adminide.inf",
 	"adminies.inf",
 	"adminifr.inf",
@@ -147,8 +149,14 @@ bool Exword::Connect(ExwordMode mode, ExwordRegion region)
     case CHINESE:
         options |= EXWORD_REGION_CN;
         break;
+    case INDIAN:
+        options |= EXWORD_REGION_IN;
+        break;
     case KOREAN:
         options |= EXWORD_REGION_KR;
+        break;
+    case ITALIAN:
+        options |= EXWORD_REGION_IT;
         break;
     case GERMAN:
         options |= EXWORD_REGION_DE;
