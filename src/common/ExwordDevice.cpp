@@ -106,7 +106,7 @@ Exword::Exword() : m_timer(this, 99)
     m_mode = LIBRARY;
     m_region = JAPANESE;
     m_storage = INTERNAL;
-    exword_register_transfer_callbacks(m_device, get_file_cb, put_file_cb, this);
+    exword_register_xfer_callbacks(m_device, get_file_cb, this, put_file_cb, this);
     exword_register_disconnect_callback(m_device, disconnect_event_cb, this);
 }
 
@@ -115,7 +115,7 @@ Exword::Exword(ExwordMode mode, ExwordRegion region)
     m_connected = false;
     m_device = exword_init();
     m_eventTarget = NULL;
-    exword_register_transfer_callbacks(m_device, get_file_cb, put_file_cb, this);
+    exword_register_xfer_callbacks(m_device, get_file_cb, this, put_file_cb, this);
     exword_register_disconnect_callback(m_device, disconnect_event_cb, this);
     Connect(mode, region);
 }
