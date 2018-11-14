@@ -3,14 +3,13 @@
 
 AC_PREREQ([2.61])
 AC_INIT(exword_tools, 1.0, brijohn@gmail.com)
-AM_INIT_AUTOMAKE([-Wall -Werror])
+AM_INIT_AUTOMAKE([subdir-objects -Wall -Werror])
 AC_CONFIG_SRCDIR([src/common/ExwordDevice.cpp])
 AC_CONFIG_HEADERS([config.h])
 
 # Checks for programs.
 AC_PROG_CXX
 AM_PROG_CC_C_O
-AC_PROG_RANLIB
 
 # Checks for header files.
 AC_CHECK_HEADERS([stdlib.h string.h])
@@ -19,6 +18,9 @@ AC_CHECK_HEADER([zlib.h], [], [AC_MSG_ERROR([zlib header not found])])
 AC_CHECK_LIB(z, inflateEnd, AC_SUBST([ZLIB_LIBS], [-lz]), [AC_MSG_ERROR([zlib support not available])])
 
 AM_OPTIONS_WXCONFIG
+
+m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
+LT_INIT
 
 reqwx=2.8.11
 AM_PATH_WXCONFIG($reqwx, wxWin=1, wxWin=0, [core, xrc, adv])
