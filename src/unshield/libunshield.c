@@ -1,5 +1,6 @@
 /* $Id: libunshield.c 3805 2009-07-18 19:15:43Z twogood $ */
 #define _BSD_SOURCE 1
+#define _DEFAULT_SOURCE 1
 #include "internal.h"
 #include "log.h"
 #include <assert.h>

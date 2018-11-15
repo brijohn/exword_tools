@@ -1,5 +1,6 @@
 /* $Id: helper.c 1780 2004-07-29 18:19:21Z twogood $ */
 #define _BSD_SOURCE 1
+#define _DEFAULT_SOURCE 1
 #include "internal.h"
 #include "log.h"
 #include <sys/types.h>
@@ -14,8 +15,8 @@ FILE* unshield_fopen_for_reading(Unshield* unshield, int index, const char* suff
   if (unshield && unshield->filename_pattern)
   {
     FILE* result = NULL;
-    char filename[256];
-    char dirname[256];
+    char filename[257];
+    char dirname[257];
 #if defined (__MINGW32__)
     char * p = strrchr(unshield->filename_pattern, '\\');
 #else
